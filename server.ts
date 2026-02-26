@@ -20,7 +20,7 @@ db.exec(`
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = 3008;
 
   app.use(express.json());
 
@@ -79,6 +79,31 @@ async function startServer() {
     } else {
       res.status(404).json({ error: "Image not found" });
     }
+  });
+
+  app.put("/api/images/:id", upload.single("image"), (req, res) => {
+    const { id } = req.params;
+    const { category, alt } = req.body;
+    const existingImage = db.prepare("SELECT * FROM images WHERE id = ?").get(id) as any;
+
+    if (!existingImage) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    let url = existingImage.url;
+    if (req.file) {
+      // Delete old file
+      const oldFilePath = path.join(process.cwd(), "public", existingImage.url);
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+      }
+      url = `/uploads/${req.file.filename}`;
+    }
+
+    db.prepare("UPDATE images SET url = ?, category = ?, alt = ? WHERE id = ?")
+      .run(url, category || existingImage.category, alt !== undefined ? alt : existingImage.alt, id);
+
+    res.json({ id, url, category, alt });
   });
 
   // Serve static files from public

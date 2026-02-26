@@ -11,7 +11,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, useRef } from 'react';
 
 // --- Types ---
 type Page = 'home' | 'apartments' | 'offers' | 'gallery' | 'contact' | 'admin' | 'five-star' | 'healthy' | 'easy';
@@ -25,6 +25,87 @@ interface DBImage {
 }
 
 // --- Components ---
+
+// Editable Image Component with inline upload
+const EditableImage = ({
+  src,
+  alt,
+  category,
+  className,
+  onImageChange,
+  children
+}: {
+  src: string;
+  alt: string;
+  category: string;
+  className?: string;
+  onImageChange?: (newUrl: string) => void;
+  children?: any;
+}) => {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('category', category);
+    formData.append('alt', alt);
+
+    try {
+      const res = await fetch('/api/images', {
+        method: 'POST',
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        onImageChange?.(data.url);
+      }
+    } catch (err) {
+      console.error('Upload failed:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: { target: HTMLInputElement & { files: FileList | null } }) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleUpload(file);
+    }
+  };
+
+  return (
+    <div className={`relative group ${className || ''}`}>
+      {typeof children === 'function' ? (
+        <>{children(src)}</>
+      ) : children ? (
+        children
+      ) : (
+        <img src={src} alt={alt} className="w-full h-full object-cover" />
+      )}
+      <button
+        onClick={() => inputRef.current?.click()}
+        className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 disabled:opacity-50"
+        disabled={uploading}
+        title="Replace image"
+      >
+        {uploading ? '...' : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>}
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+    </div>
+  );
+};
 
 const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page) => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,6 +125,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
     { label: 'Easy living', value: 'easy' },
     { label: 'Gallery', value: 'gallery' },
     { label: 'Contact', value: 'contact' },
+    { label: 'Admin', value: 'admin' },
   ];
 
   return (
@@ -64,12 +146,12 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden xl:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => setPage(item.value)}
-              className={`text-white/90 text-[13px] uppercase tracking-widest hover:text-white transition-colors ${currentPage === item.value ? 'font-semibold' : ''}`}
+              className={`text-white/90 text-[11px] md:text-[12px] xl:text-[13px] uppercase tracking-widest hover:text-white transition-colors ${currentPage === item.value ? 'font-semibold' : ''}`}
             >
               {item.label}
             </button>
@@ -77,7 +159,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
         </div>
 
         {/* Action Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
           <button className="px-8 py-3 rounded-full bg-[#966b4d]/80 text-white text-[13px] uppercase tracking-widest hover:bg-[#966b4d] transition-all">
             Book Apartment
           </button>
@@ -147,7 +229,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
 const Footer = ({ setPage }: { setPage: (p: Page) => void }) => {
   return (
     <footer className="bg-white pt-20 pb-10 px-6 md:px-12 lg:px-24 border-t border-ts-border">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {/* Brand */}
         <div className="space-y-8">
           <div className="relative flex flex-col items-start">
@@ -180,26 +262,16 @@ const Footer = ({ setPage }: { setPage: (p: Page) => void }) => {
           </ul>
         </div>
 
-        {/* Apartments */}
-        <div>
-          <h4 className="font-sans font-semibold text-sm uppercase tracking-widest mb-6">Apartments</h4>
-          <ul className="space-y-3 text-sm text-ts-muted">
-            <li><button className="hover:text-ts-accent transition-colors font-semibold text-ts-ink">SOLO – 1 Bedroom (36 sqm)</button></li>
-            <li><button className="hover:text-ts-accent transition-colors font-semibold text-ts-ink">STUDIO – 1 Bedroom (48 sqm)</button></li>
-            <li><button className="hover:text-ts-accent transition-colors font-semibold text-ts-ink">SOHO – 2 Bedrooms (80 sqm)</button></li>
-          </ul>
-        </div>
-
         {/* Newsletter/Social */}
         <div className="flex flex-col justify-between h-full">
           <div>
             <h4 className="font-sans font-semibold text-sm uppercase tracking-widest mb-6">Follow Us</h4>
             <div className="flex space-x-4">
-              <a href="#" className="text-ts-muted hover:text-ts-accent transition-colors flex items-center space-x-2 text-xs uppercase tracking-widest">
+              <a href="#" className="text-ts-muted hover:text-ts-accent transition-colors flex items-center space-x-2 text-sm">
                 <Instagram size={16} />
                 <span>Instagram</span>
               </a>
-              <a href="#" className="text-ts-muted hover:text-ts-accent transition-colors flex items-center space-x-2 text-xs uppercase tracking-widest">
+              <a href="#" className="text-ts-muted hover:text-ts-accent transition-colors flex items-center space-x-2 text-sm">
                 <Send size={16} />
                 <span>Telegram</span>
               </a>
@@ -209,14 +281,11 @@ const Footer = ({ setPage }: { setPage: (p: Page) => void }) => {
       </div>
 
       <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-ts-border flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] text-ts-muted">
-        <div className="flex space-x-6 mb-4 md:mb-0">
-          <a href="#" className="hover:text-ts-ink">Instagram</a>
-          <a href="#" className="hover:text-ts-ink">Telegram</a>
-        </div>
         <div className="flex space-x-6">
           <span>© 2026 TS RESIDENCE</span>
           <a href="#" className="hover:text-ts-ink">Privacy Policy</a>
         </div>
+        <button onClick={() => setPage('admin')} className="hover:text-ts-ink opacity-50 hover:opacity-100">Admin</button>
       </div>
     </footer>
   );
@@ -280,11 +349,12 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
-        <img
+        <EditableImage
           src={heroImage}
           alt="TS Residence Exterior"
-          className="absolute inset-0 w-full h-full object-cover"
-          referrerPolicy="no-referrer"
+          category="hero"
+          className="absolute inset-0 w-full h-full"
+          onImageChange={setHeroImage}
         />
         <div className="absolute inset-0 bg-black/30" />
 
@@ -393,14 +463,25 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         </div>
 
         {/* SOLO */}
-        <div className="relative h-[80vh] group overflow-hidden">
-          <img
+        <div className="relative h-[80vh] overflow-hidden">
+          <EditableImage
             src={getAptImg(0, "https://picsum.photos/seed/solo-apt/1920/1080")}
             alt="SOLO Apartment"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/30" />
+            category="apartments"
+            className="absolute inset-0 w-full h-full"
+          >
+            {(src) => (
+              <>
+                <img
+                  src={src}
+                  alt="SOLO Apartment"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+              </>
+            )}
+          </EditableImage>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
             <h3 className="text-5xl md:text-6xl mb-4">SOLO Apartment</h3>
             <p className="text-sm uppercase tracking-widest font-bold mb-8">1 bedroom, 36 sqm</p>
@@ -417,14 +498,25 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         </div>
 
         {/* STUDIO */}
-        <div className="relative h-[80vh] group overflow-hidden">
-          <img
+        <div className="relative h-[80vh] overflow-hidden">
+          <EditableImage
             src={getAptImg(1, "https://picsum.photos/seed/studio-apt/1920/1080")}
             alt="STUDIO Apartment"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/30" />
+            category="apartments"
+            className="absolute inset-0 w-full h-full"
+          >
+            {(src: string) => (
+              <>
+                <img
+                  src={src}
+                  alt="STUDIO Apartment"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+              </>
+            )}
+          </EditableImage>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
             <h3 className="text-5xl md:text-6xl mb-4">STUDIO Apartment</h3>
             <p className="text-sm uppercase tracking-widest font-bold mb-8">1 bedroom, 48 sqm</p>
@@ -441,14 +533,25 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         </div>
 
         {/* SOHO */}
-        <div className="relative h-[80vh] group overflow-hidden">
-          <img
+        <div className="relative h-[80vh] overflow-hidden">
+          <EditableImage
             src={getAptImg(2, "https://picsum.photos/seed/soho-apt/1920/1080")}
             alt="SOHO Apartment"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/30" />
+            category="apartments"
+            className="absolute inset-0 w-full h-full"
+          >
+            {(src: string) => (
+              <>
+                <img
+                  src={src}
+                  alt="SOHO Apartment"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+              </>
+            )}
+          </EditableImage>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
             <h3 className="text-5xl md:text-6xl mb-4">SOHO Apartment</h3>
             <p className="text-sm uppercase tracking-widest font-bold mb-8">2 bedroom, 80 sqm</p>
@@ -870,6 +973,7 @@ const AdminPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [category, setCategory] = useState('general');
   const [alt, setAlt] = useState('');
+  const [editingImage, setEditingImage] = useState<DBImage | null>(null);
 
   const fetchImages = async () => {
     const res = await fetch('/api/images');
@@ -881,24 +985,34 @@ const AdminPage = () => {
     fetchImages();
   }, []);
 
+  const resetForm = () => {
+    setSelectedFile(null);
+    setCategory('general');
+    setAlt('');
+    setEditingImage(null);
+  };
+
   const handleUpload = async (e: FormEvent) => {
     e.preventDefault();
-    if (!selectedFile) return;
 
     setUploading(true);
     const formData = new FormData();
-    formData.append('image', selectedFile);
+    if (selectedFile) {
+      formData.append('image', selectedFile);
+    }
     formData.append('category', category);
     formData.append('alt', alt);
 
     try {
-      const res = await fetch('/api/images', {
-        method: 'POST',
+      const url = editingImage ? `/api/images/${editingImage.id}` : '/api/images';
+      const method = editingImage ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         body: formData,
       });
       if (res.ok) {
-        setSelectedFile(null);
-        setAlt('');
+        resetForm();
         fetchImages();
       }
     } catch (err) {
@@ -918,17 +1032,29 @@ const AdminPage = () => {
     }
   };
 
+  const handleEditImage = (img: DBImage) => {
+    setEditingImage(img);
+    setCategory(img.category);
+    setAlt(img.alt);
+    setSelectedFile(null);
+  };
+
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
       <h1 className="text-4xl font-serif mb-10">Image Management System</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Upload Form */}
+        {/* Upload/Edit Form */}
         <div className="lg:col-span-1 bg-white p-8 rounded-2xl border border-ts-border shadow-sm h-fit">
-          <h2 className="text-xl font-bold mb-6">Upload New Image</h2>
+          <h2 className="text-xl font-bold mb-6">{editingImage ? 'Edit Image' : 'Upload New Image'}</h2>
+          {editingImage && (
+            <div className="mb-4 aspect-video rounded-lg overflow-hidden border border-ts-border">
+              <img src={editingImage.url} alt={editingImage.alt} className="w-full h-full object-cover" />
+            </div>
+          )}
           <form onSubmit={handleUpload} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs uppercase tracking-widest font-bold">File</label>
+              <label className="text-xs uppercase tracking-widest font-bold">File {editingImage && '(leave empty to keep current)'}</label>
               <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
@@ -963,13 +1089,24 @@ const AdminPage = () => {
                 className="w-full border-b border-ts-border py-2 outline-none focus:border-ts-accent"
               />
             </div>
-            <button
-              type="submit"
-              disabled={uploading || !selectedFile}
-              className="btn-primary w-full py-3 disabled:opacity-50"
-            >
-              {uploading ? 'Uploading...' : 'Upload Image'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={uploading || (!selectedFile && !editingImage)}
+                className="btn-primary flex-1 py-3 disabled:opacity-50"
+              >
+                {uploading ? 'Saving...' : (editingImage ? 'Update Image' : 'Upload Image')}
+              </button>
+              {editingImage && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-4 py-3 border border-ts-border rounded-lg hover:bg-ts-bg transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
@@ -978,13 +1115,20 @@ const AdminPage = () => {
           <h2 className="text-xl font-bold">Stored Images ({images.length})</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images.map((img) => (
-              <div key={img.id} className="group relative aspect-square rounded-xl overflow-hidden border border-ts-border bg-ts-bg">
+              <div
+                key={img.id}
+                onClick={() => handleEditImage(img)}
+                className="group relative aspect-square rounded-xl overflow-hidden border border-ts-border bg-ts-bg cursor-pointer hover:ring-2 hover:ring-ts-accent transition-all"
+              >
                 <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                   <p className="text-white text-[10px] uppercase tracking-widest mb-1">{img.category}</p>
-                  <p className="text-white/70 text-[8px] truncate w-full mb-4">{img.alt}</p>
+                  <p className="text-white/70 text-[8px] truncate w-full mb-2">Click to edit</p>
                   <button
-                    onClick={() => handleDelete(img.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(img.id);
+                    }}
                     className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                   >
                     <X size={16} />
