@@ -1,10 +1,10 @@
-import { 
-  Instagram, 
-  Send, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  ChevronRight, 
+import {
+  Instagram,
+  Send,
+  Phone,
+  Mail,
+  MapPin,
+  ChevronRight,
   ChevronLeft,
   Menu,
   X,
@@ -50,18 +50,16 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
     <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-white/90 backdrop-blur-md py-4 shadow-sm' : 'bg-transparent py-6'}`}>
       <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
-        <div 
-          className="flex items-center cursor-pointer group"
+        <div
+          className="flex items-center cursor-pointer py-4"
           onClick={() => setPage('home')}
         >
-          <div className="flex items-center">
-            <div className="relative">
-              <span className="text-7xl font-serif font-light text-white leading-none">T</span>
-              <span className="text-7xl font-serif font-light text-white leading-none -ml-6 absolute top-4 left-6">S</span>
+          <div className="relative flex flex-col items-center">
+            <div className="relative h-16 w-16">
+              <span className="text-6xl font-serif font-light text-inherit leading-none absolute top-0 left-0">T</span>
+              <span className="text-6xl font-serif font-light text-inherit leading-none absolute top-3 left-4">S</span>
             </div>
-            <div className="flex flex-col ml-12 mt-6">
-              <span className="text-[11px] tracking-[0.4em] uppercase text-white font-sans font-bold">Residence</span>
-            </div>
+            <span className="text-[8px] tracking-[0.5em] uppercase text-inherit font-sans font-black -mt-1 ml-4">Residence</span>
           </div>
         </div>
 
@@ -94,7 +92,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: Page, setPage: (p: Page
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           className="lg:hidden p-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -151,16 +149,19 @@ const Footer = ({ setPage }: { setPage: (p: Page) => void }) => {
     <footer className="bg-white pt-20 pb-10 px-6 md:px-12 lg:px-24 border-t border-ts-border">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Brand */}
-        <div className="space-y-6">
-          <div className="text-3xl font-serif font-bold tracking-tighter leading-none flex flex-col">
-            <span className="text-4xl">TS</span>
-            <span className="text-[10px] tracking-[0.3em] uppercase -mt-1 font-sans font-semibold">Residence</span>
+        <div className="space-y-8">
+          <div className="relative flex flex-col items-start">
+            <div className="relative h-14 w-14">
+              <span className="text-5xl font-serif font-light text-[#1a1a1a] leading-none absolute top-0 left-0">T</span>
+              <span className="text-5xl font-serif font-light text-[#1a1a1a] leading-none absolute top-3 left-4">S</span>
+            </div>
+            <span className="text-[7px] tracking-[0.5em] uppercase text-[#1a1a1a] font-sans font-black -mt-1 ml-3">Residence</span>
           </div>
-          <div className="space-y-2 text-sm text-ts-muted">
+          <div className="space-y-1 text-sm text-ts-muted">
             <p>tsresidence@townsquare.co.id</p>
             <p>WhatsApp: +6281119028111</p>
             <p>Telegram: +6281119028111</p>
-            <p className="pt-4">Seminyak Jl. Nakula No.18, Legian, Kec. Kuta, Kabupaten Badung, Bali 80361</p>
+            <p className="pt-4 leading-relaxed">Seminyak Jl. Nakula No.18, Legian, Kec. Kuta, Kabupaten Badung, Bali 80361</p>
           </div>
         </div>
 
@@ -255,13 +256,13 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
   };
 
   const openGallery = (type: string, startIndex: number) => {
-    const images = apartmentImages.length > 0 
+    const images = apartmentImages.length > 0
       ? apartmentImages.map(img => img.url)
       : [
-          "https://picsum.photos/seed/solo-apt/1920/1080",
-          "https://picsum.photos/seed/studio-apt/1920/1080",
-          "https://picsum.photos/seed/soho-apt/1920/1080"
-        ];
+        "https://picsum.photos/seed/solo-apt/1920/1080",
+        "https://picsum.photos/seed/studio-apt/1920/1080",
+        "https://picsum.photos/seed/soho-apt/1920/1080"
+      ];
     setSelectedApt({ type, images });
   };
 
@@ -269,26 +270,26 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
     <div className="w-full">
       <AnimatePresence>
         {selectedApt && (
-          <ApartmentGallery 
-            type={selectedApt.type} 
-            images={selectedApt.images} 
-            onClose={() => setSelectedApt(null)} 
+          <ApartmentGallery
+            type={selectedApt.type}
+            images={selectedApt.images}
+            onClose={() => setSelectedApt(null)}
           />
         )}
       </AnimatePresence>
 
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
-        <img 
-          src={heroImage} 
-          alt="TS Residence Exterior" 
+        <img
+          src={heroImage}
+          alt="TS Residence Exterior"
           className="absolute inset-0 w-full h-full object-cover"
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-black/30" />
-        
+
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -296,7 +297,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
           >
             Five-star living
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -304,7 +305,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
           >
             Enjoy full access to TS Suites Hotel — rooftop infinity pool, 24/7 gym, leisure club, salon, and designer retail — all just steps from your door.
           </motion.p>
-          <motion.button 
+          <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
@@ -324,7 +325,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
               { label: 'Easy living', value: 'easy' as Page }
             ].map((item, index, array) => (
               <div key={item.label} className="flex items-center">
-                <button 
+                <button
                   onClick={() => setPage(item.value)}
                   className="text-white/90 text-xs md:text-sm uppercase tracking-[0.2em] font-medium hover:text-white transition-all duration-300"
                 >
@@ -356,8 +357,8 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
               { label: 'Healthy living', value: 'healthy' as Page },
               { label: 'Easy living', value: 'easy' as Page }
             ].map((item, i) => (
-              <button 
-                key={item.label} 
+              <button
+                key={item.label}
                 onClick={() => setPage(item.value)}
                 className={`text-2xl md:text-4xl font-serif ${i === 0 ? 'text-ts-ink border-b-2 border-ts-accent pb-2' : 'text-ts-muted hover:text-ts-ink transition-colors'}`}
               >
@@ -375,9 +376,9 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         </div>
 
         <div className="mt-20 rounded-2xl overflow-hidden shadow-2xl max-w-6xl mx-auto aspect-[16/9]">
-          <img 
-            src={getGenImg(0, "https://picsum.photos/seed/ts-residence-garden/1200/800")} 
-            alt="Tropical Garden" 
+          <img
+            src={getGenImg(0, "https://picsum.photos/seed/ts-residence-garden/1200/800")}
+            alt="Tropical Garden"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
@@ -393,9 +394,9 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
         {/* SOLO */}
         <div className="relative h-[80vh] group overflow-hidden">
-          <img 
-            src={getAptImg(0, "https://picsum.photos/seed/solo-apt/1920/1080")} 
-            alt="SOLO Apartment" 
+          <img
+            src={getAptImg(0, "https://picsum.photos/seed/solo-apt/1920/1080")}
+            alt="SOLO Apartment"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             referrerPolicy="no-referrer"
           />
@@ -405,7 +406,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             <p className="text-sm uppercase tracking-widest font-bold mb-8">1 bedroom, 36 sqm</p>
             <div className="flex space-x-4">
               <button className="bg-white text-ts-ink px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-ts-accent hover:text-white transition-all">Book Apartment</button>
-              <button 
+              <button
                 onClick={() => openGallery('SOLO Apartment', 0)}
                 className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-ts-ink transition-all"
               >
@@ -417,9 +418,9 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
         {/* STUDIO */}
         <div className="relative h-[80vh] group overflow-hidden">
-          <img 
-            src={getAptImg(1, "https://picsum.photos/seed/studio-apt/1920/1080")} 
-            alt="STUDIO Apartment" 
+          <img
+            src={getAptImg(1, "https://picsum.photos/seed/studio-apt/1920/1080")}
+            alt="STUDIO Apartment"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             referrerPolicy="no-referrer"
           />
@@ -429,7 +430,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             <p className="text-sm uppercase tracking-widest font-bold mb-8">1 bedroom, 48 sqm</p>
             <div className="flex space-x-4">
               <button className="bg-white text-ts-ink px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-ts-accent hover:text-white transition-all">Book Apartment</button>
-              <button 
+              <button
                 onClick={() => openGallery('STUDIO Apartment', 1)}
                 className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-ts-ink transition-all"
               >
@@ -441,9 +442,9 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
         {/* SOHO */}
         <div className="relative h-[80vh] group overflow-hidden">
-          <img 
-            src={getAptImg(2, "https://picsum.photos/seed/soho-apt/1920/1080")} 
-            alt="SOHO Apartment" 
+          <img
+            src={getAptImg(2, "https://picsum.photos/seed/soho-apt/1920/1080")}
+            alt="SOHO Apartment"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             referrerPolicy="no-referrer"
           />
@@ -453,7 +454,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             <p className="text-sm uppercase tracking-widest font-bold mb-8">2 bedroom, 80 sqm</p>
             <div className="flex space-x-4">
               <button className="bg-white text-ts-ink px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-ts-accent hover:text-white transition-all">Book Apartment</button>
-              <button 
+              <button
                 onClick={() => openGallery('SOHO Apartment', 2)}
                 className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-ts-ink transition-all"
               >
@@ -476,12 +477,12 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             </p>
             <button onClick={() => setPage('contact')} className="btn-primary px-10 py-4 text-xs uppercase tracking-widest">Book Apartment</button>
           </div>
-          
+
           <div className="relative">
             <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-              <img 
-                src={getGenImg(1, "https://picsum.photos/seed/young-family/800/1000")} 
-                alt="Young Families" 
+              <img
+                src={getGenImg(1, "https://picsum.photos/seed/young-family/800/1000")}
+                alt="Young Families"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -523,69 +524,57 @@ const GalleryPage = () => {
   }, []);
 
   const categories = [
-    { name: 'TS Residence', handle: '@tsresidences', filter: 'residence' },
-    { name: 'TS Suites', handle: '@tssuitesseminyak', filter: 'suites' },
-    { name: 'TS Social Club', handle: '@tssocialclub', filter: 'social' },
-    { name: 'No.1 Wellness Club', handle: '@no1wellnessclub', filter: 'wellness' },
+    { name: 'TS Residence', handle: '@tsresidences', filter: 'residence', avatar: 'https://picsum.photos/seed/avatar1/100/100' },
+    { name: 'TS Suites', handle: '@tssuitesseminyak', filter: 'suites', avatar: 'https://picsum.photos/seed/avatar2/100/100' },
+    { name: 'TS Social Club', handle: '@tssocialclub', filter: 'social', avatar: 'https://picsum.photos/seed/avatar3/100/100' },
+    { name: 'No.1 Wellness Club', handle: '@nolwellnessclub', filter: 'wellness', avatar: 'https://picsum.photos/seed/avatar4/100/100' },
   ];
 
   return (
-    <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-      <h1 className="text-6xl md:text-8xl mb-20">Gallery</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div className="pt-32 pb-40 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto">
+      <div className="mb-24">
+        <h1 className="text-7xl md:text-8xl lg:text-9xl font-serif text-[#a68266] mb-4">Gallery</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
         {categories.map((cat) => {
           const catImages = images.filter(img => img.category === cat.filter);
-          const displayImg = catImages.length > 0 ? catImages[0].url : `https://picsum.photos/seed/${cat.filter}/800/600`;
-          
+          const displayImg = catImages.length > 0 ? catImages[0].url : `https://picsum.photos/seed/${cat.filter}/1200/800`;
+
           return (
-            <div key={cat.name} className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-ts-accent/10 overflow-hidden">
-                  <img src={displayImg} alt={cat.name} className="w-full h-full object-cover" />
+            <div key={cat.name} className="space-y-8">
+              <div className="flex items-center space-x-5">
+                <div className="w-14 h-14 rounded-full overflow-hidden border border-[#1a1a1a]/5">
+                  <img src={cat.avatar} alt={cat.name} className="w-full h-full object-cover" />
                 </div>
-                <div>
-                  <h4 className="font-semibold flex items-center">
-                    {cat.name}
-                    <span className="ml-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-[8px] text-white">✓</span>
-                  </h4>
-                  <p className="text-xs text-ts-muted">{cat.handle}</p>
+                <div className="flex flex-col">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="text-lg font-sans font-bold text-[#1a1a1a]">
+                      {cat.name}
+                    </h4>
+                    <div className="w-4 h-4 bg-[#3897f0] rounded-full flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-white fill-current">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="text-sm font-sans text-[#1a1a1a]/50">{cat.handle}</p>
                 </div>
               </div>
-              <div className="aspect-video rounded-2xl overflow-hidden shadow-lg group">
-                <img 
-                  src={displayImg} 
-                  alt={cat.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+
+              <div className="aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer relative">
+                <img
+                  src={displayImg}
+                  alt={cat.name}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
               </div>
-              {catImages.length > 1 && (
-                <div className="grid grid-cols-3 gap-4">
-                  {catImages.slice(1, 4).map((img) => (
-                    <div key={img.id} className="aspect-square rounded-lg overflow-hidden border border-ts-border">
-                      <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           );
         })}
       </div>
-
-      {images.filter(img => img.category === 'general').length > 0 && (
-        <div className="mt-20">
-          <h2 className="text-3xl mb-10">More from TS Residence</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {images.filter(img => img.category === 'general').map(img => (
-              <div key={img.id} className="aspect-square rounded-xl overflow-hidden shadow-md">
-                <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -601,40 +590,49 @@ const OffersPage = () => {
   }, []);
 
   const defaultOffers = [
-    { title: 'SPECIAL OFFER OPENING CELEBRATION', desc: 'STAY 3 MONTHS, PAY 2 MONTHS on all Apartment categories.', img: 'https://picsum.photos/seed/offer1/1200/600' },
-    { title: 'SPECIAL OFFER EASY PAY', desc: 'Stay for MORE THAN 3 MONTHS and simply make a 20% upfront payment of the total rental cost.', img: 'https://picsum.photos/seed/offer2/1200/600' },
-    { title: 'SPECIAL OFFER FOR RESIDENTS', desc: 'Get 15% discount in TS Suites for F&B and Retail Services and Shop.', img: 'https://picsum.photos/seed/offer3/1200/600' },
-    { title: 'SPECIAL OFFER FOR RESIDENTS', desc: 'Get 15% Discount in No.1 Wellness Club on Massage, Wellness, and F&B.', img: 'https://picsum.photos/seed/offer4/1200/600' },
+    { title: 'SPECIAL OFFER OPENING CELEBRATION', desc: 'STAY 3 MONTHS, PAY 2 MONTHS on all Apartment categories.', img: 'https://picsum.photos/seed/offer1-ts/1920/800' },
+    { title: 'SPECIAL OFFER EASY PAY', desc: 'Stay for MORE THAN 3 MONTHS and simply make a 20% upfront payment of the total rental cost. The remaining 80% shall be paid in advance each month through out the lease period to ensure a fixed rental rate and duration to KEEP YOUR CASH-FLOW.', img: 'https://picsum.photos/seed/offer2-ts/1920/800' },
+    { title: 'SPECIAL OFFER FOR RESIDENTS', desc: 'Get 15% Discount in TS Suites for F&B and Retail Services and Shop.', img: 'https://picsum.photos/seed/offer3-ts/1920/800' },
+    { title: 'SPECIAL OFFER FOR RESIDENTS', desc: 'Get 15% Discount in No.1 Wellness Club on Massage, Wellness and F&B.', img: 'https://picsum.photos/seed/offer4-ts/1920/800' },
   ];
 
-  const displayOffers = images.length > 0 
+  const displayOffers = images.length > 0
     ? images.map((img, i) => ({
-        title: img.alt || `OFFER ${i + 1}`,
-        desc: 'Contact us for more details about this special offer.',
-        img: img.url
-      }))
+      title: img.alt || defaultOffers[i]?.title || `OFFER ${i + 1}`,
+      desc: defaultOffers[i]?.desc || 'Contact us for more details about this special offer.',
+      img: img.url
+    }))
     : defaultOffers;
 
   return (
-    <div className="pt-32 pb-20">
-      <div className="px-6 md:px-12 lg:px-24 mb-20">
-        <h1 className="text-6xl md:text-8xl">Offers</h1>
+    <div className="pt-32 pb-0">
+      <div className="px-6 md:px-12 lg:px-24 mb-24 max-w-[1600px] mx-auto">
+        <h1 className="text-7xl md:text-9xl font-serif text-[#a68266]">Offers</h1>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-0">
         {displayOffers.map((offer, i) => (
-          <div key={i} className="relative h-[60vh] overflow-hidden group">
-            <img 
-              src={offer.img} 
-              alt={offer.title} 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+          <div key={i} className="relative h-[85vh] w-full overflow-hidden group">
+            <img
+              src={offer.img}
+              alt={offer.title}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
-              <h3 className="text-3xl md:text-4xl max-w-xl mb-4 uppercase tracking-widest font-serif">{offer.title}</h3>
-              <p className="text-sm md:text-base max-w-lg mb-8 font-light">{offer.desc}</p>
-              <button className="bg-white text-ts-ink px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-ts-accent hover:text-white transition-all">Claim your Deal</button>
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55 transition-colors duration-1000" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-8 z-10">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="max-w-3xl space-y-10"
+              >
+                <h3 className="text-3xl md:text-5xl lg:text-6xl uppercase tracking-[0.25em] font-serif leading-tight">{offer.title}</h3>
+                <p className="text-sm md:text-base lg:text-lg font-light tracking-[0.15em] max-w-2xl mx-auto leading-relaxed">{offer.desc}</p>
+                <div className="pt-10">
+                  <button className="bg-white text-[#1a1a1a] px-14 py-5 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-[#a68266] hover:text-white transition-all duration-500 transform hover:-translate-y-2 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">Claim your Deal</button>
+                </div>
+              </motion.div>
             </div>
           </div>
         ))}
@@ -650,7 +648,7 @@ const ApartmentGallery = ({ type, images, onClose }: { type: string, images: str
   const prev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -666,7 +664,7 @@ const ApartmentGallery = ({ type, images, onClose }: { type: string, images: str
         <button onClick={prev} className="absolute left-6 z-10 text-white p-4 hover:bg-white/10 rounded-full transition-colors">
           <ChevronLeft size={48} />
         </button>
-        
+
         <AnimatePresence mode="wait">
           <motion.img
             key={currentIndex}
@@ -691,8 +689,8 @@ const ApartmentGallery = ({ type, images, onClose }: { type: string, images: str
         <p className="text-sm text-white/60 uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
         <div className="flex justify-center space-x-2 mt-6">
           {images.map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`h-1 transition-all duration-300 ${i === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}
             />
           ))}
@@ -704,37 +702,81 @@ const ApartmentGallery = ({ type, images, onClose }: { type: string, images: str
 
 const FiveStarPage = () => {
   return (
-    <div className="pt-32 pb-20">
-      <section className="px-6 md:px-12 lg:px-24 mb-20">
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-6xl md:text-9xl mb-10 font-serif text-ts-accent"
-        >
-          Five-star living
-        </motion.h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-8">
-            <p className="text-2xl font-light leading-relaxed text-ts-muted">
-              Experience the pinnacle of hospitality integrated into your daily life. Stay within the complex of the renowned TS Suites Hotel and enjoy full access to 5-star facilities and amenities.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-ts-accent rounded-full" />
-                <span className="text-sm uppercase tracking-widest font-bold">Rooftop Infinity Pool</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-ts-accent rounded-full" />
-                <span className="text-sm uppercase tracking-widest font-bold">24/7 Concierge Service</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-ts-accent rounded-full" />
-                <span className="text-sm uppercase tracking-widest font-bold">Designer Retail & Salon</span>
-              </div>
-            </div>
+    <div className="w-full overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative h-[90vh] flex items-center justify-center">
+        <img
+          src="https://picsum.photos/seed/ts-fivestar/1920/1080"
+          alt="Five Star Living"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative text-center px-6 z-10">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-white text-5xl md:text-8xl lg:text-9xl font-serif max-w-6xl mx-auto leading-[1.1] italic"
+          >
+            Make five-star living your everyday experience
+          </motion.h1>
+        </div>
+      </section>
+
+      {/* Intro Section */}
+      <section className="py-32 px-6 md:px-12 lg:px-24 bg-white">
+        <div className="max-w-5xl mx-auto text-center space-y-16">
+          <div className="w-px h-32 bg-[#1a1a1a]/10 mx-auto" />
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-2xl md:text-4xl lg:text-5xl text-[#8e6b52] leading-[1.4] font-serif font-light"
+          >
+            At TS Residence, you don’t just live — you live with the full privileges of a five-star hotel, all under one roof. Enjoy the TS Suites hotel access just next door, with exclusive access to facilities designed for residents who expect more.
+          </motion.h2>
+        </div>
+      </section>
+
+      {/* Facilities Showcase */}
+      <section className="py-40 px-6 md:px-12 lg:px-24 bg-[#f8f5f1]">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {[
+              { title: 'TS Suites Rooftop Infinity Pool', img: 'https://picsum.photos/seed/pool2/800/600' },
+              { title: 'TS Suites Gym', img: 'https://picsum.photos/seed/gym2/800/600' },
+              { title: 'TS Suites Bar', img: 'https://picsum.photos/seed/bar2/800/600' },
+              { title: 'Le Petit Shop', img: 'https://picsum.photos/seed/shop2/800/600' }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="space-y-6"
+              >
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                </div>
+                <h4 className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#1a1a1a]">
+                  {item.title}
+                </h4>
+              </motion.div>
+            ))}
           </div>
-          <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://picsum.photos/seed/fivestar/1000/1000" alt="Five star facilities" className="w-full h-full object-cover" />
+
+          <div className="flex space-x-6 mt-16">
+            <button className="p-4 rounded-full border border-[#1a1a1a]/10 hover:bg-white hover:shadow-xl transition-all duration-300 group">
+              <ChevronLeft size={24} className="text-[#1a1a1a]/40 group-hover:text-[#1a1a1a]" />
+            </button>
+            <button className="p-4 rounded-full border border-[#1a1a1a]/10 hover:bg-white hover:shadow-xl transition-all duration-300 group">
+              <ChevronRight size={24} className="text-[#1a1a1a]/40 group-hover:text-[#1a1a1a]" />
+            </button>
           </div>
         </div>
       </section>
@@ -746,7 +788,7 @@ const HealthyLivingPage = () => {
   return (
     <div className="pt-32 pb-20">
       <section className="px-6 md:px-12 lg:px-24 mb-20">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-6xl md:text-9xl mb-10 font-serif text-ts-accent"
@@ -782,7 +824,7 @@ const EasyLivingPage = () => {
   return (
     <div className="pt-32 pb-20">
       <section className="px-6 md:px-12 lg:px-24 mb-20">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-6xl md:text-9xl mb-10 font-serif text-ts-accent"
@@ -879,7 +921,7 @@ const AdminPage = () => {
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
       <h1 className="text-4xl font-serif mb-10">Image Management System</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Upload Form */}
         <div className="lg:col-span-1 bg-white p-8 rounded-2xl border border-ts-border shadow-sm h-fit">
@@ -887,8 +929,8 @@ const AdminPage = () => {
           <form onSubmit={handleUpload} className="space-y-6">
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-widest font-bold">File</label>
-              <input 
-                type="file" 
+              <input
+                type="file"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                 className="w-full text-sm"
                 accept="image/*"
@@ -896,7 +938,7 @@ const AdminPage = () => {
             </div>
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-widest font-bold">Category</label>
-              <select 
+              <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full border-b border-ts-border py-2 outline-none focus:border-ts-accent"
@@ -913,16 +955,16 @@ const AdminPage = () => {
             </div>
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-widest font-bold">Alt Text / Title</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={alt}
                 onChange={(e) => setAlt(e.target.value)}
                 placeholder="Describe the image"
                 className="w-full border-b border-ts-border py-2 outline-none focus:border-ts-accent"
               />
             </div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={uploading || !selectedFile}
               className="btn-primary w-full py-3 disabled:opacity-50"
             >
@@ -941,7 +983,7 @@ const AdminPage = () => {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                   <p className="text-white text-[10px] uppercase tracking-widest mb-1">{img.category}</p>
                   <p className="text-white/70 text-[8px] truncate w-full mb-4">{img.alt}</p>
-                  <button 
+                  <button
                     onClick={() => handleDelete(img.id)}
                     className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                   >
@@ -959,97 +1001,112 @@ const AdminPage = () => {
 
 const ContactPage = () => {
   return (
-    <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-        <div className="space-y-12">
-          <h1 className="text-6xl md:text-8xl leading-tight">Let's talk about your long-stay</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4 p-8 bg-white rounded-2xl border border-ts-border">
-              <p className="text-[10px] uppercase tracking-widest text-ts-muted">Phone / WA</p>
-              <p className="text-xl">+62 811 1902 8111</p>
-              <p className="text-[10px] uppercase tracking-widest text-ts-muted pt-4">Telegram</p>
-              <p className="text-xl">+62 811 1902 8111</p>
-            </div>
-            <div className="space-y-4 p-8 bg-white rounded-2xl border border-ts-border">
-              <p className="text-[10px] uppercase tracking-widest text-ts-muted">Email address</p>
-              <p className="text-xl">tsresidence@townsquare.co.id</p>
-            </div>
-            <div className="md:col-span-2 space-y-4 p-8 bg-white rounded-2xl border border-ts-border">
-              <p className="text-[10px] uppercase tracking-widest text-ts-muted">Address</p>
-              <p className="text-xl leading-relaxed">Seminyak Jl. Nakula No.18, Legian, Kec. Kuta, Kabupaten Badung, Bali 80361</p>
-            </div>
+    <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
+      <div className="mb-24">
+        <h1 className="text-6xl md:text-7xl lg:text-8xl leading-tight mb-20 text-[#a68266] font-serif">Let’s talk about your long-stay</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="space-y-4">
+            <p className="text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 font-bold">Phone / WA</p>
+            <p className="text-xl md:text-2xl">+62 811 1902 8111</p>
+            <p className="text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 font-bold pt-4">Telegram</p>
+            <p className="text-xl md:text-2xl">+62 811 1902 8111</p>
+          </div>
+          <div className="space-y-4">
+            <p className="text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 font-bold">Email address</p>
+            <p className="text-xl md:text-2xl">tsresidence@townsquare.co.id</p>
+          </div>
+          <div className="space-y-4">
+            <p className="text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 font-bold">Address</p>
+            <p className="text-xl md:text-2xl leading-relaxed">Seminyak Jl. Nakula No.18, Legian, Kec. Kuta, Kabupaten Badung, Bali 80361</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Form Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start bg-[#f8f5f1] p-8 md:p-16 lg:p-24 rounded-[2.5rem] mb-32">
+        <div className="lg:col-span-5 h-full">
+          <div className="aspect-[4/5] md:aspect-square lg:aspect-auto lg:h-full min-h-[400px] overflow-hidden rounded-2xl">
+            <img
+              src="https://picsum.photos/seed/ts-hallway/1200/1200"
+              alt="TS Residence Hallway"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        <div className="bg-white p-10 rounded-3xl border border-ts-border shadow-sm space-y-8">
-          <div className="space-y-2">
-            <h2 className="text-4xl">Looking for a long term stay?</h2>
-            <p className="text-sm text-ts-muted">Tell us what you're looking for — and our team will get back to you with personalized recommendations.</p>
+        <div className="lg:col-span-7 space-y-12">
+          <div className="space-y-4">
+            <h2 className="text-4xl md:text-5xl font-serif text-[#1a1a1a]">Looking for a long term stay?</h2>
+            <p className="text-base text-[#1a1a1a]/60">Tell us what you're looking for — and our team will get back to you with personalized recommendations.</p>
           </div>
 
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-widest font-bold">First Name</label>
-                <input type="text" placeholder="First Name" className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-widest font-bold">Last Name</label>
-                <input type="text" placeholder="Last Name" className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors" />
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">First Name</label>
+              <input type="text" placeholder="First Name" className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors bg-transparent text-sm placeholder:text-[#1a1a1a]/30" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">Last Name</label>
+              <input type="text" placeholder="Last Name" className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors bg-transparent text-sm placeholder:text-[#1a1a1a]/30" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">Email</label>
+              <input type="email" placeholder="Email" className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors bg-transparent text-sm placeholder:text-[#1a1a1a]/30" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">Phone (optional)</label>
+              <input type="text" placeholder="Phone number" className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors bg-transparent text-sm placeholder:text-[#1a1a1a]/30" />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">Stay duration (optional)</label>
+              <div className="relative">
+                <select className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors bg-transparent text-sm appearance-none">
+                  <option>Monthly</option>
+                  <option>Quarterly</option>
+                  <option>Yearly</option>
+                </select>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <ChevronLeft className="-rotate-90 text-[#1a1a1a]/40" size={16} />
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-widest font-bold">Email</label>
-                <input type="email" placeholder="Email" className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-widest font-bold">Phone (optional)</label>
-                <input type="text" placeholder="Phone number" className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors" />
-              </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a1a1a]">Message (optional)</label>
+              <textarea placeholder="Type your message here..." rows={4} className="w-full border-b border-[#1a1a1a]/10 py-3 focus:border-[#a68266] outline-none transition-colors resize-none bg-transparent text-sm placeholder:text-[#1a1a1a]/30" />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] uppercase tracking-widest font-bold">Stay duration (optional)</label>
-              <select className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors bg-transparent">
-                <option>Monthly</option>
-                <option>Quarterly</option>
-                <option>Yearly</option>
-              </select>
+            <div className="md:col-span-2 pt-6">
+              <button type="button" className="bg-[#946c4f] text-white px-10 py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-[#7a5c43] transition-all transform hover:-translate-y-1 shadow-lg shadow-[#946c4f]/20">Send inquiry</button>
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] uppercase tracking-widest font-bold">Message (optional)</label>
-              <textarea placeholder="Type your message here..." rows={4} className="w-full border-b border-ts-border py-2 focus:border-ts-accent outline-none transition-colors resize-none bg-transparent" />
-            </div>
-            <button type="button" className="btn-primary w-full py-4 uppercase tracking-widest">Send inquiry</button>
           </form>
         </div>
       </div>
 
       {/* Terms & Conditions */}
-      <div className="mt-32 pt-20 border-t border-ts-border">
-        <h2 className="text-3xl mb-12">Terms & Condition</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-xs text-ts-muted leading-relaxed">
-          <div className="space-y-8">
+      <div className="mt-32 pt-24 border-t border-[#1a1a1a]/10">
+        <h2 className="text-3xl md:text-4xl mb-16 font-serif">Terms & Condition</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-24 text-[12px] text-[#1a1a1a]/60 leading-relaxed">
+          <div className="col-span-1 lg:col-span-2 space-y-12">
             <div>
-              <h4 className="text-ts-ink font-bold uppercase tracking-widest mb-4">Terms of Payment</h4>
-              <ol className="list-decimal pl-4 space-y-2">
+              <h4 className="text-[#1a1a1a] font-bold uppercase tracking-[0.2em] mb-6">Terms of Payment</h4>
+              <ol className="list-decimal pl-4 space-y-4">
                 <li>Rental cost paid monthly in advance, by latest on 25th day of the current month. First payment shall be made before Lease Commencement Date.</li>
                 <li>Refundable Security Deposit, in amount of 1 (one) month rental cost, shall be paid before Lease Commencement Date, together with the first payment of rental cost.</li>
                 <li>All Costs paid are applicable to tax and service charge.</li>
               </ol>
             </div>
             <div>
-              <h4 className="text-ts-ink font-bold uppercase tracking-widest mb-4">Additional Cost (paid separately)</h4>
+              <h4 className="text-[#1a1a1a] font-bold uppercase tracking-[0.2em] mb-6">Additional Cost (paid separately)</h4>
               <ol className="list-decimal pl-4 space-y-2">
                 <li>Electricity</li>
               </ol>
             </div>
           </div>
-          <div className="space-y-8">
+
+          <div className="space-y-12">
             <div>
-              <h4 className="text-ts-ink font-bold uppercase tracking-widest mb-4">Included in Rental Cost</h4>
-              <ol className="list-decimal pl-4 space-y-2">
+              <h4 className="text-[#1a1a1a] font-bold uppercase tracking-[0.2em] mb-6">Included in Rental Cost</h4>
+              <ol className="list-decimal pl-4 space-y-4">
                 <li>All units fully furnished</li>
                 <li>Access to public area facilities : Pool, Gym, Restaurant/Lounge, Business Center at TS Suites hotel</li>
                 <li>Parking spot for 1 (one) vehicle</li>
@@ -1060,9 +1117,12 @@ const ContactPage = () => {
                 <li>Concierge services</li>
               </ol>
             </div>
+          </div>
+
+          <div className="space-y-12">
             <div>
-              <h4 className="text-ts-ink font-bold uppercase tracking-widest mb-4">Optional/Add on Services</h4>
-              <ol className="list-decimal pl-4 space-y-2">
+              <h4 className="text-[#1a1a1a] font-bold uppercase tracking-[0.2em] mb-6">Optional/Add on Services</h4>
+              <ol className="list-decimal pl-4 space-y-4">
                 <li>Laundry</li>
                 <li>Housekeeping</li>
                 <li>Breakfast</li>
@@ -1099,7 +1159,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar currentPage={page} setPage={setPage} />
-      
+
       <main className="flex-grow">
         <AnimatePresence mode="wait">
           <motion.div
@@ -1125,8 +1185,8 @@ export default function App() {
       <Footer setPage={setPage} />
 
       {/* Floating WhatsApp Button */}
-      <a 
-        href="#" 
+      <a
+        href="#"
         className="fixed bottom-8 right-8 z-50 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300"
       >
         <MessageCircle size={24} />
