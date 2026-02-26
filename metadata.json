@@ -1,0 +1,7 @@
+{
+  "name": "TS Residence Bali",
+  "description": "A luxury long-stay apartment concept in Seminyak, Bali, combining five-star hotel amenities with the comfort of home.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
