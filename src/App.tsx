@@ -324,6 +324,36 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
     return generalImages[index]?.url || fallback;
   };
 
+  const updateApartmentImage = (index: number, url: string) => {
+    setApartmentImages(prev => {
+      const next = [...prev];
+      const fallbackAlt = ['SOLO Apartment', 'STUDIO Apartment', 'SOHO Apartment'][index] || 'Apartment';
+      next[index] = {
+        id: next[index]?.id ?? Date.now() + index,
+        url,
+        category: 'apartments',
+        alt: next[index]?.alt || fallbackAlt,
+        created_at: next[index]?.created_at || new Date().toISOString(),
+      };
+      return next;
+    });
+  };
+
+  const updateGeneralImage = (index: number, url: string) => {
+    setGeneralImages(prev => {
+      const next = [...prev];
+      const fallbackAlt = ['Tropical Garden', 'Young Families'][index] || 'General';
+      next[index] = {
+        id: next[index]?.id ?? Date.now() + index,
+        url,
+        category: 'general',
+        alt: next[index]?.alt || fallbackAlt,
+        created_at: next[index]?.created_at || new Date().toISOString(),
+      };
+      return next;
+    });
+  };
+
   const openGallery = (type: string, startIndex: number) => {
     const images = apartmentImages.length > 0
       ? apartmentImages.map(img => img.url)
@@ -446,12 +476,22 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         </div>
 
         <div className="mt-20 rounded-2xl overflow-hidden shadow-2xl max-w-6xl mx-auto aspect-[16/9]">
-          <img
+          <EditableImage
             src={getGenImg(0, "https://picsum.photos/seed/ts-residence-garden/1200/800")}
             alt="Tropical Garden"
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
+            category="general"
+            className="w-full h-full"
+            onImageChange={(url) => updateGeneralImage(0, url)}
+          >
+            {(src: string) => (
+              <img
+                src={src}
+                alt="Tropical Garden"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            )}
+          </EditableImage>
         </div>
       </section>
 
@@ -469,6 +509,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             alt="SOLO Apartment"
             category="apartments"
             className="absolute inset-0 w-full h-full"
+            onImageChange={(url) => updateApartmentImage(0, url)}
           >
             {(src) => (
               <>
@@ -504,6 +545,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             alt="STUDIO Apartment"
             category="apartments"
             className="absolute inset-0 w-full h-full"
+            onImageChange={(url) => updateApartmentImage(1, url)}
           >
             {(src: string) => (
               <>
@@ -539,6 +581,7 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
             alt="SOHO Apartment"
             category="apartments"
             className="absolute inset-0 w-full h-full"
+            onImageChange={(url) => updateApartmentImage(2, url)}
           >
             {(src: string) => (
               <>
@@ -583,12 +626,22 @@ const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
           <div className="relative">
             <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-              <img
+              <EditableImage
                 src={getGenImg(1, "https://picsum.photos/seed/young-family/800/1000")}
                 alt="Young Families"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+                category="general"
+                className="w-full h-full"
+                onImageChange={(url) => updateGeneralImage(1, url)}
+              >
+                {(src: string) => (
+                  <img
+                    src={src}
+                    alt="Young Families"
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+              </EditableImage>
             </div>
             <div className="mt-8 space-y-2">
               <h4 className="text-2xl">Young Families</h4>
@@ -614,16 +667,18 @@ const GalleryPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/images')
-      .then(res => res.json())
-      .then(data => {
+    const fetchImages = async () => {
+      try {
+        const res = await fetch('/api/images');
+        const data = await res.json();
         setImages(data);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Error fetching gallery images:', err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchImages();
   }, []);
 
   const categories = [
@@ -665,15 +720,32 @@ const GalleryPage = () => {
                 </div>
               </div>
 
-              <div className="aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer relative">
-                <img
-                  src={displayImg}
-                  alt={cat.name}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-              </div>
+              <EditableImage
+                src={displayImg}
+                alt={cat.name}
+                category={cat.filter}
+                className="aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer relative"
+                onImageChange={() => {
+                  setLoading(true);
+                  fetch('/api/images')
+                    .then(res => res.json())
+                    .then(data => setImages(data))
+                    .catch(err => console.error('Error fetching gallery images:', err))
+                    .finally(() => setLoading(false));
+                }}
+              >
+                {(src: string) => (
+                  <>
+                    <img
+                      src={src}
+                      alt={cat.name}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  </>
+                )}
+              </EditableImage>
             </div>
           );
         })}
@@ -686,10 +758,16 @@ const OffersPage = () => {
   const [images, setImages] = useState<DBImage[]>([]);
 
   useEffect(() => {
-    fetch('/api/images?category=offers')
-      .then(res => res.json())
-      .then(data => setImages(data))
-      .catch(err => console.error('Error fetching offers images:', err));
+    const fetchOfferImages = async () => {
+      try {
+        const res = await fetch('/api/images?category=offers');
+        const data = await res.json();
+        setImages(data);
+      } catch (err) {
+        console.error('Error fetching offers images:', err);
+      }
+    };
+    fetchOfferImages();
   }, []);
 
   const defaultOffers = [
@@ -716,12 +794,27 @@ const OffersPage = () => {
       <div className="space-y-0">
         {displayOffers.map((offer, i) => (
           <div key={i} className="relative h-[85vh] w-full overflow-hidden group">
-            <img
+            <EditableImage
               src={offer.img}
               alt={offer.title}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
-              referrerPolicy="no-referrer"
-            />
+              category="offers"
+              className="absolute inset-0 w-full h-full"
+              onImageChange={() => {
+                fetch('/api/images?category=offers')
+                  .then(res => res.json())
+                  .then(data => setImages(data))
+                  .catch(err => console.error('Error fetching offers images:', err));
+              }}
+            >
+              {(src: string) => (
+                <img
+                  src={src}
+                  alt={offer.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+            </EditableImage>
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/55 transition-colors duration-1000" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-8 z-10">
               <motion.div
@@ -804,15 +897,57 @@ const ApartmentGallery = ({ type, images, onClose }: { type: string, images: str
 };
 
 const FiveStarPage = () => {
+  const [heroImage, setHeroImage] = useState('https://picsum.photos/seed/ts-fivestar/1920/1080');
+  const [facilityImages, setFacilityImages] = useState([
+    'https://picsum.photos/seed/pool2/800/600',
+    'https://picsum.photos/seed/gym2/800/600',
+    'https://picsum.photos/seed/bar2/800/600',
+    'https://picsum.photos/seed/shop2/800/600',
+  ]);
+
+  useEffect(() => {
+    const fetchFiveStarImages = async () => {
+      try {
+        const res = await fetch('/api/images?category=five-star');
+        const data = await res.json();
+        if (data?.length) {
+          setHeroImage(data[0].url || heroImage);
+          setFacilityImages(prev => prev.map((img, i) => data[i + 1]?.url || img));
+        }
+      } catch (err) {
+        console.error('Error fetching five-star images:', err);
+      }
+    };
+    fetchFiveStarImages();
+  }, []);
+
+  const updateFacilityImage = (index: number, url: string) => {
+    setFacilityImages(prev => {
+      const next = [...prev];
+      next[index] = url;
+      return next;
+    });
+  };
+
   return (
     <div className="w-full overflow-hidden">
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center justify-center">
-        <img
-          src="https://picsum.photos/seed/ts-fivestar/1920/1080"
+        <EditableImage
+          src={heroImage}
           alt="Five Star Living"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+          category="five-star"
+          className="absolute inset-0 w-full h-full"
+          onImageChange={setHeroImage}
+        >
+          {(src: string) => (
+            <img
+              src={src}
+              alt="Five Star Living"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+        </EditableImage>
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative text-center px-6 z-10">
           <motion.h1
@@ -846,10 +981,10 @@ const FiveStarPage = () => {
         <div className="max-w-[1600px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             {[
-              { title: 'TS Suites Rooftop Infinity Pool', img: 'https://picsum.photos/seed/pool2/800/600' },
-              { title: 'TS Suites Gym', img: 'https://picsum.photos/seed/gym2/800/600' },
-              { title: 'TS Suites Bar', img: 'https://picsum.photos/seed/bar2/800/600' },
-              { title: 'Le Petit Shop', img: 'https://picsum.photos/seed/shop2/800/600' }
+              { title: 'TS Suites Rooftop Infinity Pool' },
+              { title: 'TS Suites Gym' },
+              { title: 'TS Suites Bar' },
+              { title: 'Le Petit Shop' }
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -860,11 +995,21 @@ const FiveStarPage = () => {
                 className="space-y-6"
               >
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer">
-                  <img
-                    src={item.img}
+                  <EditableImage
+                    src={facilityImages[idx]}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  />
+                    category="five-star"
+                    className="w-full h-full"
+                    onImageChange={(url) => updateFacilityImage(idx, url)}
+                  >
+                    {(src: string) => (
+                      <img
+                        src={src}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                      />
+                    )}
+                  </EditableImage>
                 </div>
                 <h4 className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#1a1a1a]">
                   {item.title}
@@ -888,6 +1033,23 @@ const FiveStarPage = () => {
 };
 
 const HealthyLivingPage = () => {
+  const [heroImage, setHeroImage] = useState('https://picsum.photos/seed/healthy/1000/1200');
+
+  useEffect(() => {
+    const fetchHealthyImage = async () => {
+      try {
+        const res = await fetch('/api/images?category=healthy');
+        const data = await res.json();
+        if (data?.length) {
+          setHeroImage(data[0].url || heroImage);
+        }
+      } catch (err) {
+        console.error('Error fetching healthy image:', err);
+      }
+    };
+    fetchHealthyImage();
+  }, []);
+
   return (
     <div className="pt-32 pb-20">
       <section className="px-6 md:px-12 lg:px-24 mb-20">
@@ -900,7 +1062,17 @@ const HealthyLivingPage = () => {
         </motion.h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl order-2 lg:order-1">
-            <img src="https://picsum.photos/seed/healthy/1000/1200" alt="Healthy living" className="w-full h-full object-cover" />
+            <EditableImage
+              src={heroImage}
+              alt="Healthy living"
+              category="healthy"
+              className="w-full h-full"
+              onImageChange={setHeroImage}
+            >
+              {(src: string) => (
+                <img src={src} alt="Healthy living" className="w-full h-full object-cover" />
+              )}
+            </EditableImage>
           </div>
           <div className="space-y-8 order-1 lg:order-2">
             <p className="text-2xl font-light leading-relaxed text-ts-muted">
@@ -1144,6 +1316,23 @@ const AdminPage = () => {
 };
 
 const ContactPage = () => {
+  const [hallwayImage, setHallwayImage] = useState('https://picsum.photos/seed/ts-hallway/1200/1200');
+
+  useEffect(() => {
+    const fetchContactImage = async () => {
+      try {
+        const res = await fetch('/api/images?category=contact');
+        const data = await res.json();
+        if (data?.length) {
+          setHallwayImage(data[0].url || hallwayImage);
+        }
+      } catch (err) {
+        console.error('Error fetching contact image:', err);
+      }
+    };
+    fetchContactImage();
+  }, []);
+
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
       <div className="mb-24">
@@ -1171,11 +1360,21 @@ const ContactPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start bg-[#f8f5f1] p-8 md:p-16 lg:p-24 rounded-[2.5rem] mb-32">
         <div className="lg:col-span-5 h-full">
           <div className="aspect-[4/5] md:aspect-square lg:aspect-auto lg:h-full min-h-[400px] overflow-hidden rounded-2xl">
-            <img
-              src="https://picsum.photos/seed/ts-hallway/1200/1200"
+            <EditableImage
+              src={hallwayImage}
               alt="TS Residence Hallway"
-              className="w-full h-full object-cover"
-            />
+              category="contact"
+              className="w-full h-full"
+              onImageChange={setHallwayImage}
+            >
+              {(src: string) => (
+                <img
+                  src={src}
+                  alt="TS Residence Hallway"
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </EditableImage>
           </div>
         </div>
 
