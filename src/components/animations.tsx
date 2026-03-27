@@ -1,7 +1,13 @@
 import { motion, useInView } from 'motion/react';
-import { useRef, ReactNode } from 'react';
+import type { Key, ReactNode } from 'react';
+import { useRef } from 'react';
 
-export const FadeInView = ({ children, className = '', delay = 0, direction = 'up' }: {
+export const FadeInView = ({
+  children,
+  className = '',
+  delay = 0,
+  direction = 'up',
+}: {
   children: ReactNode;
   className?: string;
   delay?: number;
@@ -30,7 +36,11 @@ export const FadeInView = ({ children, className = '', delay = 0, direction = 'u
   );
 };
 
-export const StaggerContainer = ({ children, className = '', staggerDelay = 0.1 }: {
+export const StaggerContainer = ({
+  children,
+  className = '',
+  staggerDelay = 0.1,
+}: {
   children: ReactNode;
   className?: string;
   staggerDelay?: number;
@@ -42,10 +52,10 @@ export const StaggerContainer = ({ children, className = '', staggerDelay = 0.1 
     <motion.div
       ref={ref}
       initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
+      animate={isInView ? 'visible' : 'hidden'}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: staggerDelay } }
+        visible: { transition: { staggerChildren: staggerDelay } },
       }}
       className={className}
     >
@@ -54,11 +64,22 @@ export const StaggerContainer = ({ children, className = '', staggerDelay = 0.1 
   );
 };
 
-export const StaggerItem = ({ children, className = '' }: { children: ReactNode; className?: string; key?: any }) => (
+export const StaggerItem = ({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+  key?: Key;
+}) => (
   <motion.div
     variants={{
       hidden: { opacity: 0, y: 30 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } }
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+      },
     }}
     className={className}
   >

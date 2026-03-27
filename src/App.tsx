@@ -17,7 +17,9 @@ import { ApartmentPage } from './pages/ApartmentPage';
 export default function App() {
   const [page, setPage] = useState<Page>('home');
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [page]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [page]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -38,12 +40,14 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
           >
             {page === 'home' && <HomePage setPage={setPage} />}
             {page === 'apartments' && <HomePage setPage={setPage} />}
             {page === 'solo' && <ApartmentPage type="solo" setPage={setPage} />}
-            {page === 'studio' && <ApartmentPage type="studio" setPage={setPage} />}
+            {page === 'studio' && (
+              <ApartmentPage type="studio" setPage={setPage} />
+            )}
             {page === 'soho' && <ApartmentPage type="soho" setPage={setPage} />}
             {page === 'five-star' && <FiveStarPage />}
             {page === 'healthy' && <HealthyLivingPage />}

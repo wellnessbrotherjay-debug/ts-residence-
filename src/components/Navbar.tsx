@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react';
 import { BTN_SOLID } from '../constants';
 import type { Page } from '../types';
 
-export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (p: Page) => void }) => {
+export const Navbar = ({
+  currentPage,
+  setPage,
+}: {
+  currentPage: Page;
+  setPage: (p: Page) => void;
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -20,7 +26,9 @@ export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isMenuOpen]);
 
   const leftNav: { label: string; value: Page }[] = [
@@ -35,7 +43,11 @@ export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (
     { label: 'Contact', value: 'contact' },
   ];
 
-  const allNav = [...leftNav, ...rightNav, { label: 'Easy Living', value: 'easy' as Page }];
+  const allNav = [
+    ...leftNav,
+    ...rightNav,
+    { label: 'Easy Living', value: 'easy' as Page },
+  ];
 
   return (
     <>
@@ -121,14 +133,26 @@ export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (
             className="fixed inset-0 z-[100] bg-cream flex flex-col"
           >
             <div className="flex items-center justify-between px-6 py-5">
-              <button onClick={() => setPage('home')} className="flex flex-col items-center gap-0.5">
+              <button
+                onClick={() => setPage('home')}
+                className="flex flex-col items-center gap-0.5"
+              >
                 <div className="flex items-baseline">
-                  <span className="text-3xl font-serif font-light text-ink">T</span>
-                  <span className="text-3xl font-serif font-light text-ink">S</span>
+                  <span className="text-3xl font-serif font-light text-ink">
+                    T
+                  </span>
+                  <span className="text-3xl font-serif font-light text-ink">
+                    S
+                  </span>
                 </div>
-                <span className="text-[8px] tracking-[0.45em] uppercase font-sans font-semibold text-ink/60">Residence</span>
+                <span className="text-[8px] tracking-[0.45em] uppercase font-sans font-semibold text-ink/60">
+                  Residence
+                </span>
               </button>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 text-ink">
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 text-ink"
+              >
                 <X size={24} />
               </button>
             </div>
@@ -140,7 +164,10 @@ export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08, duration: 0.5 }}
-                  onClick={() => { setPage(item.value); setIsMenuOpen(false); }}
+                  onClick={() => {
+                    setPage(item.value);
+                    setIsMenuOpen(false);
+                  }}
                   className="text-3xl md:text-4xl font-serif font-light text-ink hover:text-gold transition-colors py-3"
                 >
                   {item.label}
@@ -150,19 +177,33 @@ export const Navbar = ({ currentPage, setPage }: { currentPage: Page; setPage: (
 
             <div className="px-6 pb-10 flex flex-col items-center gap-6">
               <button
-                onClick={() => { setPage('contact'); setIsMenuOpen(false); }}
+                onClick={() => {
+                  setPage('contact');
+                  setIsMenuOpen(false);
+                }}
                 className={`${BTN_SOLID} w-full max-w-xs text-center`}
               >
                 Book Apartment
               </button>
               <div className="flex gap-6">
-                <a href="https://www.instagram.com/tsresidences/" target="_blank" rel="noopener noreferrer" className="text-muted hover:text-gold transition-colors">
+                <a
+                  href="https://www.instagram.com/tsresidences/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted hover:text-gold transition-colors"
+                >
                   <Instagram size={20} />
                 </a>
-                <a href="#" className="text-muted hover:text-gold transition-colors">
+                <a
+                  href="#"
+                  className="text-muted hover:text-gold transition-colors"
+                >
                   <Send size={20} />
                 </a>
-                <a href="#" className="text-muted hover:text-gold transition-colors">
+                <a
+                  href="#"
+                  className="text-muted hover:text-gold transition-colors"
+                >
                   <Phone size={20} />
                 </a>
               </div>

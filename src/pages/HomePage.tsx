@@ -1,21 +1,29 @@
 import { ArrowRight, Star, Dumbbell, Waves } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { BTN_GOLD, BTN_LIGHT, BTN_SOLID } from '../constants';
-import { FadeInView, StaggerContainer, StaggerItem } from '../components/animations';
+import {
+  FadeInView,
+  StaggerContainer,
+  StaggerItem,
+} from '../components/animations';
 import { EditableImage } from '../components/EditableImage';
 import { HeroSection } from '../components/HeroSection';
 import type { Page, DBImage } from '../types';
 
 export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
-  const [heroImage, setHeroImage] = useState<string>('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1920&q=80');
+  const [heroImage, setHeroImage] = useState<string>(
+    'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1920&q=80',
+  );
   const [apartmentImages, setApartmentImages] = useState<DBImage[]>([]);
   const [generalImages, setGeneralImages] = useState<DBImage[]>([]);
 
-  const getAptImg = (index: number, fallback: string) => apartmentImages[index]?.url || fallback;
-  const getGenImg = (index: number, fallback: string) => generalImages[index]?.url || fallback;
+  const getAptImg = (index: number, fallback: string) =>
+    apartmentImages[index]?.url || fallback;
+  const getGenImg = (index: number, fallback: string) =>
+    generalImages[index]?.url || fallback;
 
   const updateApartmentImage = (index: number, url: string) => {
-    setApartmentImages(prev => {
+    setApartmentImages((prev) => {
       const next = [...prev];
       next[index] = {
         id: next[index]?.id ?? Date.now() + index,
@@ -29,25 +37,71 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
   };
 
   const apartments = [
-    { name: "SOLO", sqm: "36", bed: "1 Bedroom", desc: "Compact luxury for solo explorers", img: getAptImg(0, "https://picsum.photos/seed/solo-apt/1920/1080"), page: 'solo' as Page },
-    { name: "STUDIO", sqm: "48", bed: "1 Bedroom", desc: "Spacious elegance for couples", img: getAptImg(1, "https://picsum.photos/seed/studio-apt/1920/1080"), page: 'studio' as Page },
-    { name: "SOHO", sqm: "80", bed: "2 Bedrooms", desc: "Ultimate space for families", img: getAptImg(2, "https://picsum.photos/seed/soho-apt/1920/1080"), page: 'soho' as Page },
+    {
+      name: 'SOLO',
+      sqm: '36',
+      bed: '1 Bedroom',
+      desc: 'Compact luxury for solo explorers',
+      img: getAptImg(0, 'https://picsum.photos/seed/solo-apt/1920/1080'),
+      page: 'solo' as Page,
+    },
+    {
+      name: 'STUDIO',
+      sqm: '48',
+      bed: '1 Bedroom',
+      desc: 'Spacious elegance for couples',
+      img: getAptImg(1, 'https://picsum.photos/seed/studio-apt/1920/1080'),
+      page: 'studio' as Page,
+    },
+    {
+      name: 'SOHO',
+      sqm: '80',
+      bed: '2 Bedrooms',
+      desc: 'Ultimate space for families',
+      img: getAptImg(2, 'https://picsum.photos/seed/soho-apt/1920/1080'),
+      page: 'soho' as Page,
+    },
   ];
 
   useEffect(() => {
-    fetch('/api/images?category=hero').then(r => r.json()).then(d => { if (d?.[0]) setHeroImage(d[0].url); });
+    fetch('/api/images?category=hero')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.[0]) setHeroImage(d[0].url);
+      });
     (async () => {
       const types = ['solo', 'studio', 'soho'];
-      const results = await Promise.all(types.map(t => fetch(`/api/images?category=${t}`).then(r => r.json())));
-      setApartmentImages(results.map((d, i) => d[0] || { id: -1, url: `https://picsum.photos/seed/${types[i]}-apt/1920/1080`, category: types[i], alt: `${types[i].toUpperCase()} Apartment`, created_at: new Date().toISOString() }));
+      const results = await Promise.all(
+        types.map((t) =>
+          fetch(`/api/images?category=${t}`).then((r) => r.json()),
+        ),
+      );
+      setApartmentImages(
+        results.map(
+          (d, i) =>
+            d[0] || {
+              id: -1,
+              url: `https://picsum.photos/seed/${types[i]}-apt/1920/1080`,
+              category: types[i],
+              alt: `${types[i].toUpperCase()} Apartment`,
+              created_at: new Date().toISOString(),
+            },
+        ),
+      );
     })();
-    fetch('/api/images?category=general').then(r => r.json()).then(d => setGeneralImages(d));
+    fetch('/api/images?category=general')
+      .then((r) => r.json())
+      .then((d) => setGeneralImages(d));
   }, []);
 
   return (
     <div className="w-full">
       {/* Hero */}
-      <HeroSection setPage={setPage} heroImage={heroImage} setHeroImage={setHeroImage} />
+      <HeroSection
+        setPage={setPage}
+        heroImage={heroImage}
+        setHeroImage={setHeroImage}
+      />
 
       {/* Introduction Section */}
       <section className="section-pad bg-cream">
@@ -57,12 +111,15 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
           </FadeInView>
           <FadeInView delay={0.15}>
             <h2 className="heading-section text-ink mt-6 mb-8">
-              A new concept of living that combines five-star luxury, wellness, and everyday convenience
+              A new concept of living that combines five-star luxury, wellness,
+              and everyday convenience
             </h2>
           </FadeInView>
           <FadeInView delay={0.3}>
             <p className="text-body max-w-2xl mx-auto">
-              TS Residence by TS Suites offers premium apartments designed for monthly rentals, creating a hassle-free long-stay experience in Bali's most sought-after neighborhood.
+              TS Residence by TS Suites offers premium apartments designed for
+              monthly rentals, creating a hassle-free long-stay experience in
+              Bali's most sought-after neighborhood.
             </p>
           </FadeInView>
           <FadeInView delay={0.4}>
@@ -80,30 +137,35 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         <div className="max-w-[1400px] mx-auto">
           <FadeInView className="text-center mb-16">
             <span className="label-caps text-gold">Our Philosophy</span>
-            <h2 className="heading-section text-ink mt-4">Three Pillars of Living</h2>
+            <h2 className="heading-section text-ink mt-4">
+              Three Pillars of Living
+            </h2>
           </FadeInView>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8" staggerDelay={0.15}>
+          <StaggerContainer
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+            staggerDelay={0.15}
+          >
             {[
               {
-                title: "Five-Star Living",
-                desc: "Full privileges of a luxury hotel — coworking, dining, salon, and retail — all at your doorstep.",
+                title: 'Five-Star Living',
+                desc: 'Full privileges of a luxury hotel — coworking, dining, salon, and retail — all at your doorstep.',
                 page: 'five-star' as Page,
-                img: "https://picsum.photos/seed/fivestar-card/800/1000",
+                img: 'https://picsum.photos/seed/fivestar-card/800/1000',
                 icon: <Star size={20} />,
               },
               {
-                title: "Healthy Living",
-                desc: "Daily yoga, reformer Pilates, sauna, cold bath, and IV therapy — designed for your best self.",
+                title: 'Healthy Living',
+                desc: 'Daily yoga, reformer Pilates, sauna, cold bath, and IV therapy — designed for your best self.',
                 page: 'healthy' as Page,
-                img: "https://picsum.photos/seed/healthy-card/800/1000",
+                img: 'https://picsum.photos/seed/healthy-card/800/1000',
                 icon: <Dumbbell size={20} />,
               },
               {
-                title: "Easy Living",
-                desc: "Walking distance to Seminyak Beach, flexible monthly leases, and personalized concierge service.",
+                title: 'Easy Living',
+                desc: 'Walking distance to Seminyak Beach, flexible monthly leases, and personalized concierge service.',
                 page: 'easy' as Page,
-                img: "https://picsum.photos/seed/easy-card/800/1000",
+                img: 'https://picsum.photos/seed/easy-card/800/1000',
                 icon: <Waves size={20} />,
               },
             ].map((pillar, i) => (
@@ -127,7 +189,9 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
                   </div>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-gold">{pillar.icon}</span>
-                    <h3 className="text-xl font-serif text-ink">{pillar.title}</h3>
+                    <h3 className="text-xl font-serif text-ink">
+                      {pillar.title}
+                    </h3>
                   </div>
                   <p className="text-body">{pillar.desc}</p>
                 </button>
@@ -141,9 +205,15 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
       <section className="bg-cream-dark">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
           {/* Image Side */}
-          <FadeInView direction="left" className="relative min-h-[50vh] lg:min-h-full">
+          <FadeInView
+            direction="left"
+            className="relative min-h-[50vh] lg:min-h-full"
+          >
             <EditableImage
-              src={getGenImg(0, "https://picsum.photos/seed/seminyak-pool/1200/1400")}
+              src={getGenImg(
+                0,
+                'https://picsum.photos/seed/seminyak-pool/1200/1400',
+              )}
               alt="TS Residence Pool"
               category="general"
               className="absolute inset-0 w-full h-full"
@@ -163,21 +233,26 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
               <FadeInView direction="right" delay={0.2}>
                 <div className="space-y-6">
                   {[
-                    "Strategically located with fast access to everything",
-                    "Safe, expat-friendly, and walkable neighborhood",
-                    "Vibrant culture, wellness, dining, and digital-friendly cafes",
-                    "Well-developed infrastructure — hospital, co-working, retail",
-                    "Breathtaking beaches at your doorstep",
+                    'Strategically located with fast access to everything',
+                    'Safe, expat-friendly, and walkable neighborhood',
+                    'Vibrant culture, wellness, dining, and digital-friendly cafes',
+                    'Well-developed infrastructure — hospital, co-working, retail',
+                    'Breathtaking beaches at your doorstep',
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-4 group">
                       <div className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0 group-hover:scale-150 transition-transform" />
-                      <p className="text-body group-hover:text-ink transition-colors">{item}</p>
+                      <p className="text-body group-hover:text-ink transition-colors">
+                        {item}
+                      </p>
                     </div>
                   ))}
                 </div>
               </FadeInView>
               <FadeInView direction="right" delay={0.4}>
-                <button onClick={() => setPage('contact')} className={`${BTN_SOLID} mt-10`}>
+                <button
+                  onClick={() => setPage('contact')}
+                  className={`${BTN_SOLID} mt-10`}
+                >
                   Book Apartment
                 </button>
               </FadeInView>
@@ -192,14 +267,22 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
           <FadeInView className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div>
               <span className="label-caps text-gold">Suites & Apartments</span>
-              <h2 className="heading-section text-ink mt-4">Find Your Perfect Space</h2>
+              <h2 className="heading-section text-ink mt-4">
+                Find Your Perfect Space
+              </h2>
             </div>
-            <button onClick={() => setPage('apartments')} className={`${BTN_GOLD} self-start md:self-auto`}>
+            <button
+              onClick={() => setPage('apartments')}
+              className={`${BTN_GOLD} self-start md:self-auto`}
+            >
               View All <ArrowRight size={14} className="inline ml-2" />
             </button>
           </FadeInView>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8" staggerDelay={0.15}>
+          <StaggerContainer
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+            staggerDelay={0.15}
+          >
             {apartments.map((apt, i) => (
               <StaggerItem key={i}>
                 <button
@@ -225,15 +308,22 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
                     </EditableImage>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <span className="text-white/60 text-[11px] uppercase tracking-[0.2em] font-sans">{apt.sqm} sqm &middot; {apt.bed}</span>
+                      <span className="text-white/60 text-[11px] uppercase tracking-[0.2em] font-sans">
+                        {apt.sqm} sqm &middot; {apt.bed}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-serif text-ink group-hover:text-gold transition-colors">{apt.name}</h3>
+                      <h3 className="text-2xl font-serif text-ink group-hover:text-gold transition-colors">
+                        {apt.name}
+                      </h3>
                       <p className="text-muted text-sm mt-1">{apt.desc}</p>
                     </div>
-                    <ArrowRight size={18} className="text-muted group-hover:text-gold group-hover:translate-x-1 transition-all shrink-0" />
+                    <ArrowRight
+                      size={18}
+                      className="text-muted group-hover:text-gold group-hover:translate-x-1 transition-all shrink-0"
+                    />
                   </div>
                 </button>
               </StaggerItem>
@@ -252,12 +342,15 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
           <FadeInView>
-            <span className="label-caps text-gold-light mb-6 block">Limited Time</span>
+            <span className="label-caps text-gold-light mb-6 block">
+              Limited Time
+            </span>
             <h2 className="text-white heading-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl max-w-3xl mx-auto">
               Special Opening Celebration
             </h2>
             <p className="text-white/60 text-base md:text-lg font-sans font-light mt-6 max-w-xl mx-auto">
-              Stay 3 months, pay for 2. Available across all apartment categories.
+              Stay 3 months, pay for 2. Available across all apartment
+              categories.
             </p>
             <button
               onClick={() => setPage('offers')}
@@ -275,7 +368,10 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
           <FadeInView direction="left">
             <div className="aspect-[4/5] overflow-hidden">
               <EditableImage
-                src={getGenImg(1, "https://picsum.photos/seed/young-family/800/1000")}
+                src={getGenImg(
+                  1,
+                  'https://picsum.photos/seed/young-family/800/1000',
+                )}
                 alt="Life at TS Residence"
                 category="general"
                 className="w-full h-full"
@@ -299,10 +395,18 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
               TS Residence is for people like you
             </h2>
             <p className="text-body mb-4">
-              Whether you're a digital nomad seeking inspiration, a couple embracing island life, or a family looking for a safe, connected, and complete environment — TS Residence is ready to welcome you home.
+              Whether you're a digital nomad seeking inspiration, a couple
+              embracing island life, or a family looking for a safe, connected,
+              and complete environment — TS Residence is ready to welcome you
+              home.
             </p>
             <div className="space-y-3 mb-10">
-              {["Digital nomads & remote workers", "Couples & young professionals", "Families with children", "Long-stay business travelers"].map((item, i) => (
+              {[
+                'Digital nomads & remote workers',
+                'Couples & young professionals',
+                'Families with children',
+                'Long-stay business travelers',
+              ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-1 h-1 rounded-full bg-gold" />
                   <span className="text-sm text-muted">{item}</span>

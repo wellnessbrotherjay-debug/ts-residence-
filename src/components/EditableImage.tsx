@@ -1,4 +1,14 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+
+type EditableImageProps = {
+  src: string;
+  alt: string;
+  category: string;
+  className?: string;
+  onImageChange?: (newUrl: string) => void;
+  children?: ReactNode | ((src: string) => ReactNode);
+};
 
 export const EditableImage = ({
   src,
@@ -6,15 +16,8 @@ export const EditableImage = ({
   category,
   className,
   onImageChange,
-  children
-}: {
-  src: string;
-  alt: string;
-  category: string;
-  className?: string;
-  onImageChange?: (newUrl: string) => void;
-  children?: any;
-}) => {
+  children,
+}: EditableImageProps) => {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -25,7 +28,10 @@ export const EditableImage = ({
     formData.append('category', category);
     formData.append('alt', alt);
     try {
-      const res = await fetch('/api/images', { method: 'POST', body: formData });
+      const res = await fetch('/api/images', {
+        method: 'POST',
+        body: formData,
+      });
       if (res.ok) {
         const data = await res.json();
         onImageChange?.(data.url);
@@ -39,7 +45,11 @@ export const EditableImage = ({
 
   return (
     <div className={`relative group ${className || ''}`}>
-      {typeof children === 'function' ? children(src) : children ? children : (
+      {typeof children === 'function' ? (
+        children(src)
+      ) : children ? (
+        children
+      ) : (
         <img src={src} alt={alt} className="w-full h-full object-cover" />
       )}
       <button
@@ -48,8 +58,20 @@ export const EditableImage = ({
         disabled={uploading}
         title="Replace image"
       >
-        {uploading ? '...' : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {uploading ? (
+          '...'
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
@@ -60,7 +82,10 @@ export const EditableImage = ({
         ref={inputRef}
         type="file"
         accept="image/*"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleUpload(f);
+        }}
         className="hidden"
       />
     </div>

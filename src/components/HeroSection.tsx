@@ -6,7 +6,10 @@ import type { Page } from '../types';
 
 // --- Shared text content for dual-header technique ---
 const HeroTextContent = ({
-  slides, currentSlide, setPage, isDark
+  slides,
+  currentSlide,
+  setPage,
+  isDark,
 }: {
   slides: { tag: string; title: string; subtitle: string }[];
   currentSlide: number;
@@ -19,7 +22,7 @@ const HeroTextContent = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
+      transition={{ duration: 1, ease: 'easeInOut' }}
       className="flex flex-col items-center text-center"
     >
       {/* Tag */}
@@ -42,7 +45,14 @@ const HeroTextContent = ({
         className={`heading-display text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[13rem] leading-[0.85] ${
           isDark ? 'text-ink' : 'text-white'
         }`}
-        style={isDark ? {} : { textShadow: '0 4px 60px rgba(0,0,0,0.5), 0 2px 10px rgba(0,0,0,0.3)' }}
+        style={
+          isDark
+            ? {}
+            : {
+                textShadow:
+                  '0 4px 60px rgba(0,0,0,0.5), 0 2px 10px rgba(0,0,0,0.3)',
+              }
+        }
       >
         {slides[currentSlide].title}
       </motion.h1>
@@ -74,42 +84,57 @@ const HeroTextContent = ({
 );
 
 // --- Hero Section (Berkeley Double-Header Masking) ---
-export const HeroSection = ({ setPage, heroImage, setHeroImage }: {
+export const HeroSection = ({
+  setPage,
+  heroImage,
+  setHeroImage,
+}: {
   setPage: (p: Page) => void;
   heroImage: string;
   setHeroImage: (url: string) => void;
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
 
   // Scroll-driven animations
   const textY = useTransform(scrollYProgress, [0, 0.25, 0.55], [0, 0, -150]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.35, 0.55], [1, 1, 0]);
   const textScale = useTransform(scrollYProgress, [0, 0.3, 0.55], [1, 1, 0.9]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5], [0.15, 0.35, 0.6]);
+  const overlayOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.5],
+    [0.15, 0.35, 0.6],
+  );
 
   // Image container top: starts at 38% (below cream), slides up to 0 on scroll
   const imageTop = useTransform(scrollYProgress, [0, 0.25], ['38%', '0%']);
   // Negative offset for white text inside image container to align with dark text
-  const whiteTextOffset = useTransform(scrollYProgress, [0, 0.25], ['-38vh', '0vh']);
+  const whiteTextOffset = useTransform(
+    scrollYProgress,
+    [0, 0.25],
+    ['-38vh', '0vh'],
+  );
 
   const slides = [
     {
-      tag: "Welcome To",
-      title: "TS Residence",
-      subtitle: "Five-star living in the heart of Seminyak",
+      tag: 'Welcome To',
+      title: 'TS Residence',
+      subtitle: 'Five-star living in the heart of Seminyak',
     },
     {
-      tag: "Experience",
-      title: "Healthy Living",
-      subtitle: "Wellness, recovery, and mindful living — all under one roof",
+      tag: 'Experience',
+      title: 'Healthy Living',
+      subtitle: 'Wellness, recovery, and mindful living — all under one roof',
     },
     {
-      tag: "Discover",
-      title: "Easy Living",
-      subtitle: "Monthly apartments with zero stress, minutes from the beach",
+      tag: 'Discover',
+      title: 'Easy Living',
+      subtitle: 'Monthly apartments with zero stress, minutes from the beach',
     },
   ];
 
@@ -118,16 +143,15 @@ export const HeroSection = ({ setPage, heroImage, setHeroImage }: {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 8000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slides.length]);
 
   // The text position from top — must be identical for both layers
-  const textTopClass = "mt-[22vh] sm:mt-[24vh] md:mt-[26vh]";
+  const textTopClass = 'mt-[22vh] sm:mt-[24vh] md:mt-[26vh]';
 
   return (
     <div ref={heroRef} className="relative h-[200vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-
         {/* LAYER 1: Cream background + Dark text (bottom layer) */}
         <div className="absolute inset-0 bg-cream z-10">
           {/* Dark text - always visible on cream */}
@@ -136,7 +160,12 @@ export const HeroSection = ({ setPage, heroImage, setHeroImage }: {
             className="absolute inset-0 flex flex-col items-center pointer-events-none"
           >
             <div className={`pointer-events-auto ${textTopClass}`}>
-              <HeroTextContent slides={slides} currentSlide={currentSlide} setPage={setPage} isDark={true} />
+              <HeroTextContent
+                slides={slides}
+                currentSlide={currentSlide}
+                setPage={setPage}
+                isDark={true}
+              />
             </div>
           </motion.div>
         </div>
@@ -177,7 +206,12 @@ export const HeroSection = ({ setPage, heroImage, setHeroImage }: {
               className="w-full h-screen flex flex-col items-center"
             >
               <div className={`pointer-events-auto ${textTopClass}`}>
-                <HeroTextContent slides={slides} currentSlide={currentSlide} setPage={setPage} isDark={false} />
+                <HeroTextContent
+                  slides={slides}
+                  currentSlide={currentSlide}
+                  setPage={setPage}
+                  isDark={false}
+                />
               </div>
             </motion.div>
           </motion.div>
@@ -206,7 +240,9 @@ export const HeroSection = ({ setPage, heroImage, setHeroImage }: {
           style={{ opacity: textOpacity }}
           className="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-2 z-30"
         >
-          <span className="text-white/40 text-[10px] uppercase tracking-[0.3em] font-sans [writing-mode:vertical-lr]">Scroll</span>
+          <span className="text-white/40 text-[10px] uppercase tracking-[0.3em] font-sans [writing-mode:vertical-lr]">
+            Scroll
+          </span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
