@@ -4,6 +4,14 @@ import path from "path";
 import fs from "fs";
 import multer from "multer";
 import Database from "better-sqlite3";
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const db = new Database("database.db");
 
@@ -20,27 +28,30 @@ db.exec(`
 
 async function startServer() {
   const app = express();
-  const PORT = 3008;
+  const PORT = Number(process.env.PORT) || 3003;
 
   app.use(express.json());
 
-  // Ensure uploads directory exists
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-
-  // Multer config
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "public/uploads");
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-  });
+  // Multer config - using memory storage for Supabase uploads
+  const storage = multer.memoryStorage();
   const upload = multer({ storage });
+
+  // Map category to Supabase folder
+  const getSupabaseFolder = (category: string) => {
+    const mapping: Record<string, string> = {
+      'soho': 'unit_soho',
+      'solo': 'unit_solo',
+      'studio': 'unit_studio',
+      'apartments': 'unit_general', 
+      'hero': 'front_house_images',
+      'general': 'front_house_images',
+      'contact': 'front_house_images',
+      'offers': 'front_house_images',
+    };
+    // Default to front_house_images for everything else to keep it clean, 
+    // or use the category name if you want more folders (but they must exist in Supabase)
+    return mapping[category] || 'front_house_images';
+  };
 
   // API Routes
   app.get("/api/images", (req, res) => {
@@ -54,25 +65,54 @@ async function startServer() {
     res.json(images);
   });
 
-  app.post("/api/images", upload.single("image"), (req, res) => {
+  app.post("/api/images", upload.single("image"), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
     const { category, alt } = req.body;
-    const url = `/uploads/${req.file.filename}`;
-    
-    const info = db.prepare("INSERT INTO images (url, category, alt) VALUES (?, ?, ?)").run(url, category || "general", alt || "");
-    
-    res.json({ id: info.lastInsertRowid, url, category, alt });
+    const folder = getSupabaseFolder(category || "general");
+    const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname)}`;
+    const filePath = `${folder}/${fileName}`;
+
+    try {
+      const { data, error } = await supabase.storage
+        .from("as_per_unit")
+        .upload(filePath, req.file.buffer, {
+          contentType: req.file.mimetype,
+          upsert: true
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("as_per_unit")
+        .getPublicUrl(filePath);
+
+      const info = db.prepare("INSERT INTO images (url, category, alt) VALUES (?, ?, ?)").run(publicUrl, category || "general", alt || "");
+
+      res.json({ id: info.lastInsertRowid, url: publicUrl, category, alt });
+    } catch (err: any) {
+      console.error('Supabase upload error:', err);
+      res.status(500).json({ error: err.message });
+    }
   });
 
-  app.delete("/api/images/:id", (req, res) => {
+  app.delete("/api/images/:id", async (req, res) => {
     const { id } = req.params;
     const image = db.prepare("SELECT * FROM images WHERE id = ?").get(id) as any;
     if (image) {
-      const filePath = path.join(process.cwd(), "public", image.url);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+      // Try to extract path from Supabase URL
+      // Expected URL: https://.../storage/v1/object/public/as_per_unit/folder/filename.ext
+      const urlParts = image.url.split("/as_per_unit/");
+      if (urlParts.length > 1) {
+        const filePath = urlParts[1];
+        await supabase.storage.from("as_per_unit").remove([filePath]);
+      } else {
+        // Fallback for local files if any exist
+        const filePath = path.join(process.cwd(), "public", image.url);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
       }
       db.prepare("DELETE FROM images WHERE id = ?").run(id);
       res.json({ success: true });
@@ -81,7 +121,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/images/:id", upload.single("image"), (req, res) => {
+  app.put("/api/images/:id", upload.single("image"), async (req, res) => {
     const { id } = req.params;
     const { category, alt } = req.body;
     const existingImage = db.prepare("SELECT * FROM images WHERE id = ?").get(id) as any;
@@ -92,12 +132,31 @@ async function startServer() {
 
     let url = existingImage.url;
     if (req.file) {
-      // Delete old file
-      const oldFilePath = path.join(process.cwd(), "public", existingImage.url);
-      if (fs.existsSync(oldFilePath)) {
-        fs.unlinkSync(oldFilePath);
+      // Delete old file from Supabase if applicable
+      const oldUrlParts = existingImage.url.split("/as_per_unit/");
+      if (oldUrlParts.length > 1) {
+        await supabase.storage.from("as_per_unit").remove([oldUrlParts[1]]);
       }
-      url = `/uploads/${req.file.filename}`;
+
+      // Upload new file
+      const folder = getSupabaseFolder(category || existingImage.category);
+      const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname)}`;
+      const filePath = `${folder}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from("as_per_unit")
+        .upload(filePath, req.file.buffer, {
+          contentType: req.file.mimetype,
+          upsert: true
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("as_per_unit")
+        .getPublicUrl(filePath);
+      
+      url = publicUrl;
     }
 
     db.prepare("UPDATE images SET url = ?, category = ?, alt = ? WHERE id = ?")
