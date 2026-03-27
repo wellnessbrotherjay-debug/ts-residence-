@@ -1,19 +1,24 @@
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
-import { BTN_LIGHT, BTN_DARK } from '../constants';
 import { EditableImage } from './EditableImage';
-import type { Page } from '../types';
+
+const HERO_HEIGHT_PX = 1500;
+const HERO_SCROLL_HEIGHT_PX = HERO_HEIGHT_PX * 2;
+const HERO_IMAGE_START_TOP_PX = 576;
+const HERO_TEXT_TOP_CLASS = 'mt-[180px]';
+const HERO_IMAGE_ASPECT_RATIO = '21 / 9';
+const HERO_VIDEO_SRC = '/hero-video.mp4';
+const HERO_DEMO_VIDEO_SRC =
+  'https://www.hive68.com/wp-content/uploads/2019/10/Clip-1.mp4';
 
 // --- Shared text content for dual-header technique ---
 const HeroTextContent = ({
   slides,
   currentSlide,
-  setPage,
   isDark,
 }: {
   slides: { tag: string; title: string; subtitle: string }[];
   currentSlide: number;
-  setPage: (p: Page) => void;
   isDark: boolean;
 }) => (
   <AnimatePresence mode="wait">
@@ -30,8 +35,8 @@ const HeroTextContent = ({
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.3 }}
-        className={`text-[12px] sm:text-[13px] md:text-[15px] uppercase tracking-[0.4em] font-sans font-semibold mb-3 md:mb-4 ${
-          isDark ? 'text-gold' : 'text-gold/80'
+        className={`text-[12px] sm:text-[13px] md:text-[20px] uppercase tracking-[0.4em] font-sans font-semibold ${
+          isDark ? 'text-ink' : 'text-white'
         }`}
       >
         {slides[currentSlide].tag}
@@ -42,7 +47,7 @@ const HeroTextContent = ({
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`heading-display text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[13rem] leading-[0.85] ${
+        className={`heading-display text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] xl:text-[13em] leading-none ${
           isDark ? 'text-ink' : 'text-white'
         }`}
         style={
@@ -58,7 +63,7 @@ const HeroTextContent = ({
       </motion.h1>
 
       {/* Subtitle */}
-      <motion.p
+      {/*<motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9 }}
@@ -67,10 +72,10 @@ const HeroTextContent = ({
         }`}
       >
         {slides[currentSlide].subtitle}
-      </motion.p>
+      </motion.p>*/}
 
       {/* CTA Button */}
-      <motion.button
+      {/*<motion.button
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.2 }}
@@ -78,22 +83,23 @@ const HeroTextContent = ({
         className={`mt-7 md:mt-9 pointer-events-auto ${isDark ? BTN_DARK : BTN_LIGHT}`}
       >
         Book Your Stay
-      </motion.button>
+      </motion.button>*/}
     </motion.div>
   </AnimatePresence>
 );
 
 // --- Hero Section (Berkeley Double-Header Masking) ---
 export const HeroSection = ({
-  setPage,
   heroImage,
   setHeroImage,
 }: {
-  setPage: (p: Page) => void;
   heroImage: string;
   setHeroImage: (url: string) => void;
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const [hasVideoError, setHasVideoError] = useState(false);
+  const [videoSrc, setVideoSrc] = useState(HERO_VIDEO_SRC);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -105,19 +111,24 @@ export const HeroSection = ({
   const textOpacity = useTransform(scrollYProgress, [0, 0.35, 0.55], [1, 1, 0]);
   const textScale = useTransform(scrollYProgress, [0, 0.3, 0.55], [1, 1, 0.9]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const imageWidth = useTransform(scrollYProgress, [0, 0.25], ['90%', '100%']);
   const overlayOpacity = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.5],
-    [0.15, 0.35, 0.6],
+    [0, 0.08, 0.2, 0.4],
+    [0.1, 0.32, 0.58, 0.82],
   );
 
-  // Image container top: starts at 38% (below cream), slides up to 0 on scroll
-  const imageTop = useTransform(scrollYProgress, [0, 0.25], ['38%', '0%']);
+  // Image container top starts from a fixed pixel offset, then slides to 0 on scroll.
+  const imageTop = useTransform(
+    scrollYProgress,
+    [0, 0.3],
+    [`${HERO_IMAGE_START_TOP_PX}px`, '0px'],
+  );
   // Negative offset for white text inside image container to align with dark text
   const whiteTextOffset = useTransform(
     scrollYProgress,
-    [0, 0.25],
-    ['-38vh', '0vh'],
+    [0, 0.3],
+    [`-${HERO_IMAGE_START_TOP_PX}px`, '0px'],
   );
 
   const slides = [
@@ -145,13 +156,17 @@ export const HeroSection = ({
     return () => clearInterval(interval);
   }, [slides.length]);
 
-  // The text position from top — must be identical for both layers
-  const textTopClass = 'mt-[22vh] sm:mt-[24vh] md:mt-[26vh]';
-
   return (
-    <div ref={heroRef} className="relative h-[200vh]">
+    <div
+      ref={heroRef}
+      className="relative"
+      style={{ height: `${HERO_SCROLL_HEIGHT_PX}px` }}
+    >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div
+        className="sticky top-0 w-full overflow-hidden"
+        style={{ height: `${HERO_HEIGHT_PX}px` }}
+      >
         {/* LAYER 1: Cream background + Dark text (bottom layer) */}
         <div className="absolute inset-0 bg-cream z-10">
           {/* Dark text - always visible on cream */}
@@ -159,11 +174,10 @@ export const HeroSection = ({
             style={{ y: textY, opacity: textOpacity, scale: textScale }}
             className="absolute inset-0 flex flex-col items-center pointer-events-none"
           >
-            <div className={`pointer-events-auto ${textTopClass}`}>
+            <div className={`pointer-events-auto ${HERO_TEXT_TOP_CLASS}`}>
               <HeroTextContent
                 slides={slides}
                 currentSlide={currentSlide}
-                setPage={setPage}
                 isDark={true}
               />
             </div>
@@ -175,10 +189,14 @@ export const HeroSection = ({
           style={{ top: imageTop }}
           className="absolute left-0 right-0 bottom-0 z-20 overflow-hidden"
         >
-          {/* Background Image — must fill entire screen height, not just container */}
+          {/* Background image frame uses a fixed 21:9 ratio and expands from 90% to full width on scroll. */}
           <motion.div
-            style={{ scale: imageScale }}
-            className="absolute left-0 right-0 w-full h-screen"
+            style={{
+              scale: imageScale,
+              width: imageWidth,
+              aspectRatio: HERO_IMAGE_ASPECT_RATIO,
+            }}
+            className="absolute left-1/2 top-0 -translate-x-1/2 overflow-hidden"
           >
             <EditableImage
               src={heroImage}
@@ -186,30 +204,66 @@ export const HeroSection = ({
               category="hero"
               className="w-full h-full"
               onImageChange={setHeroImage}
-            />
+            >
+              {(src: string) => (
+                <>
+                  <img
+                    src={src}
+                    alt="TS Residence"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  {!hasVideoError && (
+                    <video
+                      key={videoSrc}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="auto"
+                      poster={src}
+                      onCanPlay={() => setIsVideoReady(true)}
+                      onError={() => {
+                        if (videoSrc !== HERO_DEMO_VIDEO_SRC) {
+                          setIsVideoReady(false);
+                          setVideoSrc(HERO_DEMO_VIDEO_SRC);
+                          return;
+                        }
+
+                        setHasVideoError(true);
+                      }}
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+                        isVideoReady ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    >
+                      <source src={videoSrc} type="video/mp4" />
+                    </video>
+                  )}
+                </>
+              )}
+            </EditableImage>
             {/* Gradient overlay */}
             <motion.div
               style={{ opacity: overlayOpacity }}
-              className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/20"
+              className="absolute inset-0 bg-black/70"
             />
           </motion.div>
 
-          {/* White text — offset by negative imageTop to align with Layer 1.
-              As container moves from top:38% -> 0%, text offset moves from -38vh -> 0vh,
-              keeping it at the exact same absolute screen position as the dark text. */}
+          {/* White text stays aligned with Layer 1 by mirroring the image container offset in pixels. */}
           <motion.div
             style={{ y: textY, opacity: textOpacity, scale: textScale }}
             className="absolute left-0 right-0 flex flex-col items-center pointer-events-none"
           >
             <motion.div
-              style={{ marginTop: whiteTextOffset }}
-              className="w-full h-screen flex flex-col items-center"
+              className="w-full flex flex-col items-center"
+              style={{
+                marginTop: whiteTextOffset,
+                height: `${HERO_HEIGHT_PX}px`,
+              }}
             >
-              <div className={`pointer-events-auto ${textTopClass}`}>
+              <div className={`pointer-events-auto ${HERO_TEXT_TOP_CLASS}`}>
                 <HeroTextContent
                   slides={slides}
                   currentSlide={currentSlide}
-                  setPage={setPage}
                   isDark={false}
                 />
               </div>
@@ -246,7 +300,7 @@ export const HeroSection = ({
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
+            className="w-px h-8 bg-linear-to-b from-white/40 to-transparent"
           />
         </motion.div>
       </div>

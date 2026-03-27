@@ -97,11 +97,7 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
   return (
     <div className="w-full">
       {/* Hero */}
-      <HeroSection
-        setPage={setPage}
-        heroImage={heroImage}
-        setHeroImage={setHeroImage}
-      />
+      <HeroSection heroImage={heroImage} setHeroImage={setHeroImage} />
 
       {/* Introduction Section */}
       <section className="section-pad bg-cream">
