@@ -58,37 +58,37 @@
 
 /* Label style */
 .label-caps {
-  @apply text-[11px] uppercase tracking-[0.2em] font-sans font-medium text-muted;
+  @apply text-[12px] uppercase tracking-[0.32em] font-sans font-medium text-muted;
 }
 
 /* Headings */
 .heading-display {
-  @apply font-serif font-light leading-[1.1] tracking-[-0.01em];
+  @apply font-serif font-light leading-[1.02] tracking-[-0.02em];
 }
 
 .heading-section {
-  @apply font-serif font-normal text-3xl leading-[1.2];
+  @apply font-serif font-normal text-4xl leading-[1.02] tracking-[-0.03em];
 }
 
 @media (min-width: 768px) {
   .heading-section {
-    @apply text-4xl;
+    @apply text-5xl;
   }
 }
 @media (min-width: 1024px) {
   .heading-section {
-    @apply text-5xl;
+    @apply text-6xl;
   }
 }
 
 /* Body text */
 .text-body {
-  @apply text-muted font-sans text-[15px] leading-[1.8] font-light;
+  @apply text-muted font-sans text-[17px] leading-[1.95] font-light;
 }
 
 /* Section padding */
 .section-pad {
-  @apply py-24 px-6;
+  @apply py-28 px-6;
 }
 
 @media (min-width: 768px) {
@@ -105,6 +105,32 @@
   .section-pad {
     @apply px-28;
   }
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-[1400px];
+}
+
+.section-header {
+  @apply mb-14 space-y-4;
+}
+
+@media (min-width: 1024px) {
+  .section-header {
+    @apply mb-16;
+  }
+}
+
+.card-surface {
+  @apply border border-black/6 bg-white shadow-[0_20px_60px_rgba(28,25,23,0.06)];
+}
+
+.image-frame {
+  @apply overflow-hidden bg-stone-200 shadow-[0_24px_70px_rgba(28,25,23,0.12)];
+}
+
+.soft-divider {
+  @apply h-px w-full bg-gradient-to-r from-transparent via-black/10 to-transparent;
 }
 
 /* Scrollbar */
