@@ -99,12 +99,12 @@ If you prefer to use a cloud Supabase project instead of running locally:
 
 ## Available Scripts
 
-| Script | Description |
-|---|---|
-| `npm run dev` | Start dev server (Express + Vite HMR) |
-| `npm run build` | Build frontend for production |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | TypeScript type check |
+| Script            | Description                           |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Start dev server (Express + Vite HMR) |
+| `npm run build`   | Build frontend for production         |
+| `npm run preview` | Preview the production build          |
+| `npm run lint`    | TypeScript type check                 |
 
 ---
 
@@ -126,20 +126,20 @@ ts-residence-/
 
 ## API Endpoints
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/images` | List all images (optional `?category=` filter) |
-| `POST` | `/api/images` | Upload an image (multipart form: `image`, `category`, `alt`) |
-| `PUT` | `/api/images/:id` | Update image metadata or replace file |
-| `DELETE` | `/api/images/:id` | Delete image from storage and database |
+| Method   | Path              | Description                                                  |
+| -------- | ----------------- | ------------------------------------------------------------ |
+| `GET`    | `/api/images`     | List all images (optional `?category=` filter)               |
+| `POST`   | `/api/images`     | Upload an image (multipart form: `image`, `category`, `alt`) |
+| `PUT`    | `/api/images/:id` | Update image metadata or replace file                        |
+| `DELETE` | `/api/images/:id` | Delete image from storage and database                       |
 
 ---
 
 ## Environment Variables Reference
 
-| Variable | Required | Description |
-|---|---|---|
-| `SUPABASE_URL` | Yes | Your Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key (server-side only) |
-| `PORT` | No | Server port (default: `3003`) |
-| `NODE_ENV` | No | `development` or `production` |
+| Variable                    | Required | Description                                  |
+| --------------------------- | -------- | -------------------------------------------- |
+| `SUPABASE_URL`              | Yes      | Your Supabase project URL                    |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes      | Supabase service role key (server-side only) |
+| `PORT`                      | No       | Server port (default: `3003`)                |
+| `NODE_ENV`                  | No       | `development` or `production`                |

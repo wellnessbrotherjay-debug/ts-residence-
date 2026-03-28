@@ -1,56 +1,164 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Raleway:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', 'Georgia', serif;
 
-  --color-ts-bg: #f5f2ed;
-  --color-ts-ink: #1a1a1a;
-  --color-ts-accent: #7d5633;
-  --color-ts-muted: rgba(26, 26, 26, 0.6);
-  --color-ts-border: rgba(26, 26, 26, 0.1);
+  --color-cream: #faf8f5;
+  --color-cream-dark: #f0ebe3;
+  --color-ink: #1c1917;
+  --color-ink-light: #44403c;
+  --color-gold: #b8965a;
+  --color-gold-light: #d4b97c;
+  --color-gold-dark: #8c6d3f;
+  --color-muted: #78716c;
+  --color-border: rgba(28, 25, 23, 0.08);
+  --color-border-light: rgba(28, 25, 23, 0.05);
+  --color-dark-bg: #1c1917;
+  --color-dark-surface: #292524;
 }
 
 @layer base {
-  body {
-    @apply bg-ts-bg text-ts-ink font-sans antialiased;
+  html {
+    scroll-behavior: smooth;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif font-normal;
   }
+
+  ::selection {
+    @apply bg-gold/20 text-ink;
+  }
 }
 
-.glass-nav {
-  @apply bg-white/80 backdrop-blur-md border-b border-ts-border;
-}
-
-.btn-primary {
-  @apply bg-ts-accent text-white px-6 py-2 rounded-full hover:bg-ts-accent/90 transition-all duration-300 text-sm font-medium;
-}
-
-.btn-outline {
-  @apply border border-ts-accent text-ts-accent px-6 py-2 rounded-full hover:bg-ts-accent hover:text-white transition-all duration-300 text-sm font-medium;
-}
-
-.section-padding {
-  @apply py-20 px-6 md:px-12 lg:px-24;
-}
-
+/* Nav link with animated underline */
 .nav-link {
-  @apply text-xs uppercase tracking-widest text-ts-ink/80 hover:text-ts-ink transition-colors;
+  @apply text-[13px] uppercase tracking-[0.15em] font-sans font-normal transition-all duration-300 relative;
 }
 
-/* Custom scrollbar */
+.nav-link::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-0 h-px bg-current transition-all duration-500;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+/* Label style */
+.label-caps {
+  @apply text-[12px] uppercase tracking-[0.32em] font-sans font-medium text-muted;
+}
+
+/* Headings */
+.heading-display {
+  @apply font-serif font-light leading-[1.02] tracking-[-0.02em];
+}
+
+.heading-section {
+  @apply font-serif font-normal text-4xl leading-[1.02] tracking-[-0.03em];
+}
+
+@media (min-width: 768px) {
+  .heading-section {
+    @apply text-5xl;
+  }
+}
+@media (min-width: 1024px) {
+  .heading-section {
+    @apply text-6xl;
+  }
+}
+
+/* Body text */
+.text-body {
+  @apply text-muted font-sans text-[17px] leading-[1.95] font-light;
+}
+
+/* Section padding */
+.section-pad {
+  @apply py-28 px-6;
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    @apply px-12;
+  }
+}
+@media (min-width: 1024px) {
+  .section-pad {
+    @apply px-20;
+  }
+}
+@media (min-width: 1280px) {
+  .section-pad {
+    @apply px-28;
+  }
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-[1400px];
+}
+
+.section-header {
+  @apply mb-14 space-y-4;
+}
+
+@media (min-width: 1024px) {
+  .section-header {
+    @apply mb-16;
+  }
+}
+
+.card-surface {
+  @apply border border-black/6 bg-white shadow-[0_20px_60px_rgba(28,25,23,0.06)];
+}
+
+.image-frame {
+  @apply overflow-hidden bg-stone-200 shadow-[0_24px_70px_rgba(28,25,23,0.12)];
+}
+
+.soft-divider {
+  @apply h-px w-full bg-gradient-to-r from-transparent via-black/10 to-transparent;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-ts-bg;
+  @apply bg-cream;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-ts-accent/20 rounded-full hover:bg-ts-accent/40;
+  @apply bg-gold/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gold/40;
+}
+
+/* Image zoom container */
+.img-zoom {
+  @apply overflow-hidden;
+}
+
+.img-zoom img {
+  @apply transition-transform duration-[1200ms] ease-out;
+}
+
+.img-zoom:hover img {
+  @apply scale-105;
 }
