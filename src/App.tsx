@@ -33,7 +33,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       <Navbar currentPage={page} setPage={setPage} />
 
-      <main className="flex-grow">
+      <main className="grow">
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
