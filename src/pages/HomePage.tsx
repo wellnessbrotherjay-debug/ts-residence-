@@ -7,8 +7,8 @@ import {
   StaggerItem,
 } from '../components/animations';
 import { EditableImage } from '../components/EditableImage';
-import { HeroSection } from '../components/HeroSection';
 import type { DBImage, Page } from '../types';
+import { HeroSectionV2 } from '../components/HeroSectionV2';
 
 export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
   const [heroImage, setHeroImage] = useState<string>(
@@ -126,7 +126,7 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
 
   return (
     <div className="w-full">
-      <HeroSection heroImage={heroImage} setHeroImage={setHeroImage} />
+      <HeroSectionV2 heroImage={heroImage} setHeroImage={setHeroImage} />
 
       <section className="bg-cream px-6 py-24 md:px-12 lg:px-20 lg:py-32 xl:px-28">
         <div className="soft-divider mb-12 md:mb-16" />
@@ -371,9 +371,12 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
         >
           {apartments.map((apt, i) => (
             <StaggerItem key={i}>
-              <button
+              <div
                 onClick={() => setPage(apt.page)}
-                className="group w-full text-left"
+                onKeyDown={(e) => e.key === 'Enter' && setPage(apt.page)}
+                role="button"
+                tabIndex={0}
+                className="group w-full text-left cursor-pointer"
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <EditableImage
@@ -416,7 +419,7 @@ export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
                     />
                   </div>
                 </div>
-              </button>
+              </div>
             </StaggerItem>
           ))}
         </StaggerContainer>
