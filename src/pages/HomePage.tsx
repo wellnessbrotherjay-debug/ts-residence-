@@ -8,7 +8,7 @@ import {
 } from '../components/animations';
 import { EditableImage } from '../components/EditableImage';
 import type { DBImage, Page } from '../types';
-import { HeroSectionV2 } from '../components/HeroSectionV2';
+import { HeroSectionV3 as HeroSectionV2 } from '../components/HeroSectionV3';
 
 export const HomePage = ({ setPage }: { setPage: (p: Page) => void }) => {
   const [heroImage, setHeroImage] = useState<string>(
